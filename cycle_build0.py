@@ -3,29 +3,23 @@ import networkx as nx
 final_cycles = []
 weighted_edges = []
 mutual_edges = []
-# D - сырои направленныи граф
+# raw_graph - сырои направленныи граф
 edges = [(1, 2), (1, 3), (2, 3), (2, 4), (3, 2), (2, 1), (4, 1), (4, 5), (3, 5), (2, 6), (6, 4), (4, 6), (5, 2), (2, 5)]
-D = nx.DiGraph()
-D.add_edges_from(edges)
-nodes = D.nodes
+# limit - максимальная степень знакомства, которую мы допускаем (это уменьшает количество циклов для проверки), можно менять
+limit = 2
+raw_graph = nx.DiGraph()
+raw_graph.add_edges_from(edges)
+nodes = raw_graph.nodes
 #выкидываем все невзаимные знакомства (они не считаются личнои связью)
-for e_number in range(len(edges)):
-     rev_edge = list(edges[e_number])
+for edge_number in range(len(edges)):
+     rev_edge = list(edges[edge_number])
      rev_edge.reverse()
-     if tuple(rev_edge) in edges[e_number:len(edges)]:
-         mutual_edges.append(edges[e_number])
-         mutual_edges.append(tuple(rev_edge))
-#print(mutual_edges)
-#DD - направленныи граф с исключительно взаимными связями
-DD = nx.DiGraph()
-DD.add_nodes_from(nodes)
-DD.add_edges_from(mutual_edges)
+     if tuple(rev_edge) not in edges:
+         raw_graph.remove_edge(edges[edge_number][0], edges[edge_number][1])
 #после подсчета кратчаиших путеи тем, кто совсем не знаком присваивается расстояние no_conn_rate
-paths = nx.shortest_path(DD)
+paths = nx.shortest_path(raw_graph)
 no_conn_rate = len(nodes) + 1
 #print(paths)
-#limit - максимальная степень знакомства, которую мы допускаем (это уменьшает количество циклов для проверки)
-limit = 2
 weighted_edges = []
 for start in paths:
     for target in nodes:
@@ -41,23 +35,24 @@ for start in paths:
                 weighted_edge.append(weight)
                 weighted_edges.append(tuple(weighted_edge))
 #print(weighted_edges)
-#DDD - взвешенныи направленныи граф (веса - расстояния между узлами)
-DDD = nx.DiGraph()
-DDD.add_weighted_edges_from(weighted_edges)
+#weighted_graph - взвешенныи направленныи граф (веса - расстояния между узлами)
+weighted_graph = nx.DiGraph()
+weighted_graph.add_weighted_edges_from(weighted_edges)
+final_paths =  weighted_graph.adj
 #ищем все простые циклы, включающие все узлы, выкидываем повторяющиеся (одинаковыи порядок связеи, разное направление)
-cycles = list(nx.simple_cycles(DDD))
+cycles = list(nx.simple_cycles(weighted_graph))
 if len(cycles) == 0:
     print('измените значение limit')
 else:
     for cycle in cycles:
-        reversed = []
-        reversed.append(cycle[0])
-        part = cycle[1:len(cycle)]
-        part.reverse()
-        reversed.extend(part)
-        if len(cycle) == len(nodes) and reversed not in final_cycles:
-            final_cycles.append(cycle)
-    final_paths =  DDD.adj
+        if len(cycle) == len(nodes):
+            reversed = []
+            reversed.append(cycle[0])
+            part = cycle[1:len(cycle)]
+            part.reverse()
+            reversed.extend(part)
+            if reversed not in final_cycles:
+                final_cycles.append(cycle)
 #    print(final_cycles)
     max_count = 0
     for cycle in final_cycles:
@@ -71,3 +66,4 @@ else:
             max_count = cycle_count
             best_cycle = cycle
     print(best_cycle, max_count)
+#    print(final_paths)
