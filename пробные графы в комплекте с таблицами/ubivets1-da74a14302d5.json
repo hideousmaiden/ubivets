@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "ubivets1",
+  "private_key_id": "da74a14302d59c766ffe0e94ef002f8339733603",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDyqxB065T0szTD\nhpVhku60oX0YkeYiGuUtOKxiMT7zMTgLuuKPRrNoFgDStJMoAKFCNcDOznPfEj/C\nn3FxhrhBLyA0AoMqvNUcvIltPMSQehGVL3H/hbG/fCa/oyWEGPXZKMq/6wondReu\nYK9kYFeg+UlpMvTShwqfE3mUvsCyRiI1cJxnvtbHPCtpxbVldi/Rc51kPk/cstLY\nYcR8X22Z0kX8cxpFMsna0OzciqRZk4MXdDefOsXgpj06ZCiF1ITwTdjqyMASHGVC\nkadbA0Zho+FK5xmOSVh3U2g1q0YwkI6PX6kZ6Nh8rt35ZjjsgC7/V4/HyfPATigX\namTWfsV9AgMBAAECggEAKl7qEbAsowlDVjyCirXwDgQAZrDa4OuXRm0V1FNK7YWT\nhqDL/D5ZBvyIikHTS/HINlpSXwm3O6ThEydp1Gu0clU7JzmlE2pDP7A/wp4QqDVY\nKpdNLVN3tLqFvYJMA6OkEZXIyPfOHxOX3e+t0DXuNwIv6jlme/fuR9ZLrUgdN0Mm\nmzf9vIgecG5QRWFPjsN+0jJm1IlHKV+iyXivQXHvM2hfFhwE+aehUAXjfXZlFRwJ\nwFYATS4w5M+V5uuE3Gs0A8ZRK67aEBkTHd7xjKroFzYClrGI1yjGue9nsytN00RS\nMa2fb0yfTJlsyPq0p+tyye7ARK/WA6kVgw1KCQ9tdQKBgQD9GSzMa1oKOl1KDPWZ\nqitOVtjwqGown8xhYM6FcNvIRNvA/EZeh1n2ymN5emfF8Zc0jYm+L9I22Zz0cPg3\nMBCJvJNcwZ79aBuXTjbu/zCbrRUu6GRfyYjcJV/8AJMg3HQ/hvnrJ2DIaLCiyoez\nB6vO6+g8MkJ8nuD+nNjxJBY0cwKBgQD1c0cUaM99lopvAUbtFbfLt9SpZtX8UsjG\nUh1DhDSi/2DRrihTARr0w4gEUnTILgSFNPnUWZW/fBMW7mSK5WnExabpM2Lyw7SI\nzfxHkalaAfvaZGMaOFU87M4jGySbZNdktgdaX1iwO4e4Kj/qWfc8rN7j089OyH8Z\nrmhxS5mSTwKBgQDci9dxugoX54vrPye044ghF6Sq8Na30Ee0gzrzJMkf1oD3xd07\n+g32852C+Zr77e2oqb1hsSIpEa+ngdmJnaSLoXt31HDKuLFyQ4Gy+UROI6DV40O0\nBFXyH89oNMgAVpol0WRt+T5o5HEnKfzdkM2x3ffcnJ87IOdGdz7DwoJm6QKBgGtt\nhRK9vPLuzLBBEtX5x3P2hbGPPOEvKokCr6Q5XQBqXenoG+YYeb/fRMz/efWTjo7u\n3NnAS/Z/S6uhs4fHWT+ycpdm0kwGtCGcZmq8qi6m56Byh52WQlhkHOTooGETBeMi\neJ1pVdvscj5833Sm47s+vl9g+T82KcsHtta/i/upAoGBANV+jKlh4WBFUwrctMfa\nTgksyK6570y6POJeD3XYaMSCm+ffaZUTjBBxdXhe+fsHsquL/STej7DzIAuctAbx\n9pO1f3tUT/jdfdJOb7KoyVil2QuZxzWTxqZNo5er8eZ+Hip9GuSTUrEa3RDXu5Aw\nPo1GNJljdSG+qgF85TySnsnu\n-----END PRIVATE KEY-----\n",
+  "client_email": "ubivets1@ubivets1.iam.gserviceaccount.com",
+  "client_id": "116808882317326290685",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ubivets1%40ubivets1.iam.gserviceaccount.com"
+}
