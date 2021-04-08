@@ -16,11 +16,11 @@ def status_writer(id, status):
 def main_body(m):
     user_text = m.text
     user_id = m.chat.id
+    id_check(user_id)
     user_state = 'ДОСТАТЬ ИЗ ФАЙЛА' #ЖЕНЯ СДЕЛАЙ
-    ids = 'ДОСТАТЬ ИЗ ФАЙЛА'
     if user_text == '\help':
         bot.send_message(user_id, 'бог поможет')
-    id_check(user_id)
+
     if user_state == 'role':
         keyb_first = types.ReplyKeyboardRemove()
         if user_text == 'Организатор':
