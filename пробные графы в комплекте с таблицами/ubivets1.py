@@ -1,6 +1,7 @@
 import networkx as nx
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
+#ссылка на табличку (тестовую, потом ее заменим на нормальную): https://docs.google.com/spreadsheets/d/1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU/edit#gid=0
 #чтение из фаила
 length = 5 #количество строчек в таблице
 edges = []
