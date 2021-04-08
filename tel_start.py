@@ -10,7 +10,24 @@ token = '1555845859:AAFT12GCr7l-vK8S67KGtqUAyOVM7_hl7Vc'
 bot = tb.TeleBot(token, parse_mode=None)
 
 def status_writer(id, status):
-    #ЖЕНЯ СДЕЛАЙ
+eri = id+1
+
+results = service.spreadsheets().values().batchUpdate(spreadsheetId = spreadsheetId, #ТУТ БУДЕТ АЙДИ ТАБЛИЧКИ, МЫ ЕГО ВСтАВИМ ПОТОМ
+body = {
+    "valueInputOption": "USER_ENTERED",
+    "data": [
+        {"range":
+    {
+    "sheetId": rosheet
+    "startRowIndex": [id], 
+    "endRowIndex": eri,
+    "startColumnIndex": 2,  
+    "endColumnIndex": 3 
+    },
+         "majorDimension": "ROWS",
+         "values": [[status],]}
+    ]
+}).execute()
 
 @bot.message_handler(content_types=['text'])
 def main_body(m):
