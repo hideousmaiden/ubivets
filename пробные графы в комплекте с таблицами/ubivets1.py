@@ -1,6 +1,7 @@
 import networkx as nx
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
+#ссылка на табличку (тестовую, потом ее заменим на нормальную): https://docs.google.com/spreadsheets/d/1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU/edit#gid=0
 #чтение из фаила
 length = 6 #количество строчек в таблице
 edges = []
@@ -27,7 +28,6 @@ for number in range(2,length+1):
     spreadsheetId='1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU', range=cell_conn).execute()
     conn = result.get('values')
     if stat[0][0] == 'Участник':
-        print(name[0][0])
         if conn != None:
             links = conn[0][0].split(';')
             for elem in links:
@@ -71,7 +71,6 @@ for start in paths:
 weighted_graph = nx.DiGraph()
 weighted_graph.add_weighted_edges_from(weighted_edges)
 final_paths =  weighted_graph.adj
-print(final_paths)
 cycles = list(nx.simple_cycles(weighted_graph))
 if len(cycles) == 0:
     print('измените значение limit')
