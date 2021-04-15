@@ -1,13 +1,14 @@
 import networkx as nx
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
-#ссылка на табличку (тестовую, потом ее заменим на нормальную): https://docs.google.com/spreadsheets/d/1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU/edit#gid=0
 #чтение из фаила
-length = 5 #количество строчек в таблице
+length = 6 #количество строчек в таблице
 edges = []
+isolat = []
 column_name = 'A' #столбец с именами
 column_conn = 'B' #столбец со знакомыми
 column_vict = 'C' #колонка с жертвами
+column_stat = 'D' #колонка со статусами
 CREDENTIALS_FILE = 'ubivets1-da74a14302d5.json'
 credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets',
                                                                                   'https://www.googleapis.com/auth/drive'])
@@ -17,17 +18,26 @@ for number in range(2,length+1):
     result = service.spreadsheets().values().get(
     spreadsheetId='1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU', range=cell_name).execute()
     name = result.get('values')
+    cell_stat = column_stat + str(number)
+    result = service.spreadsheets().values().get(
+    spreadsheetId='1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU', range=cell_stat).execute()
+    stat = result.get('values')
     cell_conn = column_conn + str(number)
     result = service.spreadsheets().values().get(
     spreadsheetId='1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU', range=cell_conn).execute()
-    value = result.get('values')
-    if value != None:
-        links = value[0][0].split(';')
-        for elem in links:
-            link = []
-            link.append(name[0][0])
-            link.append(elem)
-            edges.append(tuple(link))
+    conn = result.get('values')
+    if stat[0][0] == 'Участник':
+        print(name[0][0])
+        if conn != None:
+            links = conn[0][0].split(';')
+            for elem in links:
+                link = []
+                link.append(name[0][0])
+                link.append(elem)
+                edges.append(tuple(link))
+        else:
+            isolat.append(name[0][0])
+
 #графы
 final_cycles = []
 weighted_edges = []
@@ -35,6 +45,7 @@ mutual_edges = []
 limit = 0
 raw_graph = nx.DiGraph()
 raw_graph.add_edges_from(edges)
+raw_graph.add_nodes_from(isolat)
 nodes = raw_graph.nodes
 for edge_number in range(len(edges)):
      rev_edge = list(edges[edge_number])
@@ -60,6 +71,7 @@ for start in paths:
 weighted_graph = nx.DiGraph()
 weighted_graph.add_weighted_edges_from(weighted_edges)
 final_paths =  weighted_graph.adj
+print(final_paths)
 cycles = list(nx.simple_cycles(weighted_graph))
 if len(cycles) == 0:
     print('измените значение limit')
@@ -114,3 +126,4 @@ for number in range(2,length+1):
                     {"range": cell_vict,
                      "values": empt_ll}]
             }).execute()
+
