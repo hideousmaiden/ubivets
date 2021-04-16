@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "cybersep-310108",
+  "private_key_id": "c1268b1fb570f9be8b3e1d05a49df8b36dd327d9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDJbJSEmAsdzSmF\nEtVlW7Oi4DMo7Vn0+nG8g8aWqubDE9zUOYPuzIZ0L1X1eVL+F2XUUHk8fJx+5yk3\nxxWTTfz8VxyUO2NrB5OPZRgnrQLln3humii5Ri85K0LGnzvxD9qGWZpZEwqVvi4u\nmat3kz7Dbjha6Au/ozsgAALtq1X4oAuHSbm9XUYg7jvrGY8HYQ8XeCOrX+Oax9m7\nHG1Z0jdjgTqaB+//gR9Kof9BUiSXlepW9fF5lDS42sC5sf+9ctoKsUYFPEEIGpmg\nMjxP73eyNwu5P4iiKEwSgjP7dQ4qyYozhpak66yHCWK7x8ONp9TBNZsGbg9R7j5K\nb4Ik/cGPAgMBAAECggEAY9rFx/P+MtB2QGflTaHH7Lt78VK1cWrE/sFPLntb+iK7\nK6S1wKk5EJk04oQ6fgfIbhhU+gUGqizb9LBoBEY54DkpTF0ivLkdUI28C1NMZ9yG\nXkJjZPIj0BIfwQrIswl6encqOvVjHngROf3pkNZ423alTn/R7zezRHps+Tki3iVM\nW8EOkVjcrMSx+ub97l17zWyh2gxIK1HxyGz/nyTBDeBxFxOaypNBvapkAAQRFhSI\nT2YUHWkEKavlNpFUUFDf0KGZKTBho1swg7ZLUXuAwjNF3RDvH/Ihn1ApZ1nf4v55\nOBxBnYsX7vebzJI8Bz4BY6/eV+3+hiwPYnW5/JVuBQKBgQDjalEI0ufJ1YcJzJGs\n+xvbChOTxXlzZ7+DyccenULpb7d72roMpUUhE7n8vUZvPDScUM8aA7BjUYNU3cJV\n1eNuhnarv9jlZntdj99ULgUjb8Ty4yToInV6+cICBTpbhiGDGuecfD1aHCkS3qbI\nb2dcyJMc6YMmruE+oKXtKXDRHQKBgQDive4SKj5oaeLHg2JfxRmFrSxXBMhdVMaG\njFkFuWq28ffLAO9LziQVj9xKsEPJKi8G2W3BuqEeIek9W9Xb/0KcIf8LGU1aGM7n\nCYV9IIqytIhC7wU+l+sANFux3HwghwDJyxJLnU+qg26oCp/nEq87tSEZhXSvgGdy\nWET+m7+pmwKBgDNG0Ji1vU+0Fqut9ZbUU9aSshFasGTGGtejUoNjoCe0aeHCUrrx\nNOIdaY1EPDJul8o7KkdKV6Y9ReiHy/7AqHROW0mki0pGTkCtZQS9D6mK1RSTBMpW\norikwgrklOD4IGxIT7roBIlh2h0IGQEOpXa1Pv6A5HJ/cghF/sO32Vk9AoGBAKTz\nYUeLvdz98wIL/bwISnnqMpCXpR/otYhaf8TfT9gJjaf8ZRmzvKKHBs67DoVBD/ce\npG9EU0P1jZWawqkKOS4WuVEcth4uYA7J6XfO/bfmCB8RfbI8mLSMYoyxBwguzo7/\nEa86oSM9/Hl5STy0ZhC8w3iqkum+MwOHXaIQMk2zAoGBAIKCxdHh5xQc/MJ4eiDr\nUbzo2pR1YF7+yLKeo4QJJuAslP1i35Z+zYOsdJpmVoirm478ag8qmjvJdYgTR741\nzdzV2AVKXEtnQRxIjcvw24FS4MfCVIG3a+pwvvxsEjvF4IYeUaRkrerDGbSg7pxS\nGM/EQv24uKo3p2ef6L2RguIn\n-----END PRIVATE KEY-----\n",
+  "client_email": "i-vse-ze-zachem@cybersep-310108.iam.gserviceaccount.com",
+  "client_id": "115642197471359608623",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/i-vse-ze-zachem%40cybersep-310108.iam.gserviceaccount.com"
+}
