@@ -1,11 +1,29 @@
 import telebot as tb
 from telebot import types
 import csv
+import httplib2
+import apiclient.discovery
+from oauth2client.service_account import ServiceAccountCredentials
+
+CREDENTIALS_FILE = 'cybersep-310108-c1268b1fb570.json'
+
+# Читаем ключи из файла
+credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'])
+
+httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
+service = apiclient.discovery.build('sheets', 'v4', http = httpAuth)
+
+
+fifile = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg' #здесь надо будет вставить адрес табличьки, когда она появитс
+
+spreadsheet = service.spreadsheets().get(spreadsheetId = fifile).execute()
+sheetlist = spreadsheet.get('sheets')
+
 #организатор - название катки, установка дедлайна, сколько человек зарегалось, нужно ли учитывать степень знакомства
 #участник - запросить имя и название катки, проверить отсутствие имени среди уже взятых, после дедлайна прислать киборд со списком взятых имён и кнопкой завершения, когда все опросы собраны или орг принудительно начал игру прислать имя жертвы
 
 #пока игра не завершается автоматически когда кончаются жертвы
-#есть план-капкан стирать из файла инфу про игру как только она кончилась тогда не придётся проверять введённое оргом имя игры на уникальность
+
 token = '1555845859:AAFT12GCr7l-vK8S67KGtqUAyOVM7_hl7Vc'
 bot = tb.TeleBot(token, parse_mode=None)
 
@@ -41,12 +59,13 @@ def command_start(chat_id):
     bot.send_message(chat_id, "Привет!\nВыбери свою роль:", reply_markup=keyb_first)
 
 def part_gamenametaker(text, chat_id):
-    game_names = 'ДОСТАТЬ ИЗ ФАЙЛА'
-    if text not in game_names:
-        bot.send_message(chat_id, "Такой текущей партии нет, попробуй ещё раз")
-    else:
-        status_writer(chat_id, 'partn')
-        bot.send_message(chat_id, "Введи своё имя и фамилию")
+    for sheet in sheetlist:
+        if title==text:
+            sh_id = sheetId
+            status_writer(chat_id, 'partn')
+            bot.send_message(chat_id, "Введи своё имя и фамилию")
+            return sh_id
+    bot.send_message(chat_id, "Такой текущей партии нет, попробуй ещё раз")
 
 def part_nametaker(text, chat_id):
     names = 'ДОСТАТЬ ИЗ ФАЙЛА'
@@ -83,11 +102,15 @@ def part_killed(chat_id):
     bot.send_message(killer_id, "Успехх! Твоя новая цель - ", new_pray)
 
 def org_gamenametaker(text, chat_id):
-    game_names = 'ДОСТАТЬ ИЗ ФАЙЛА'
-    if text in game_names:
-        bot.send_message(chat_id, "Такая партия уже существует, попробуйте ещё раз")
+    for sheet in sheetlist:
+        if title==text:
+            bot.send_message(chat_id, "Такая партия уже существует, попробуйте ещё раз")
+            break
     else:
-        name = 'ЗАПИСАТЬ В ФАЙЛ НАЗВАНИЕ НОВОЙ ИГРЫ text'
+        results = service.spreadsheets().batchUpdate(spreadsheetId = fifile, body = {"requests": [{"addSheet": {"properties": {"title": text,"gridProperties": {"rowCount": 1000,"columnCount": 7}}}}]}).execute()
+        for sheet in sheetlist:
+            if title==text:
+                sh_id = sheetId
         status_writer(chat_id, orgreg)
         keyb_org = types.ReplyKeyboardMarkup
         act_1 = types.KeyboardButton('Сколько человек уже зарегистрировалось?')
@@ -95,6 +118,7 @@ def org_gamenametaker(text, chat_id):
         act_3 = types.KeyboardButton('Завершить регистрацию')
         keyb_org.add(act_1, act_2, act_3)
         bot.send_message(chat_id, "Игра создана. Чтобы зарегистрироваться, участникам нужно будет ввести её название: " + text, reply_markup=keyb_org)
+        return sh_id
 
 def org_startquest(chat_id):
     ids = 'ДОСТАТЬ ЯБЫ ВСЕХ УЧАСТНИКОВ ИЗ ФАЙЛА'
@@ -166,7 +190,7 @@ def main_body(m):
             status_writer(user_id, 'gamen')
 
     elif user_state == 'gamen':
-        part_gamenametaker(user_text, user_id)
+        shit_id = part_gamenametaker(user_text, user_id)
 
     elif user_state == 'partn':
         part_nametaker(user_text, user_id)
@@ -180,7 +204,7 @@ def main_body(m):
         part_killed(user_id)
 
     elif user_state == 'ogamen':
-        org_gamenametaker(user_text, user_id)
+        shit_id = org_gamenametaker(user_text, user_id)
 
     elif user_state == 'orgreg':
         org_start(user_id, user_text)
