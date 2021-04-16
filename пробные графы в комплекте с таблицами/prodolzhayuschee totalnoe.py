@@ -37,9 +37,7 @@ results = service.spreadsheets().batchUpdate(
   ]
 }).execute()
 
-#проверяем есть ли введённое участником название игры в табличке
-for sheet if title==text: rosheet = (sheet['properties']['sheetId'])
-else: rosheet = 0 
+
 
 #Заголовки
 results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
@@ -182,6 +180,10 @@ if sss==#НУЖНЫ СТАТУС
 
 result=kkk
 
+#проверяем есть ли введённое участником название игры в табличке
+for sheet if title==text: rosheet = (sheet['properties']['sheetId'])
+else: rosheet = 0 
+ 
 
 #Доставатель имен списком
 ranges: {
