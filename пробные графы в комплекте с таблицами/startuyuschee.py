@@ -11,7 +11,7 @@ httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в 
 service = apiclient.discovery.build('sheets', 'v4', http = httpAuth) # Выбираем работу с таблицами и 4 версию API 
 
 spreadsheet = service.spreadsheets().create(body = {
-    'properties': {'title': 'Табличька', 'locale': 'ru_RU'},
+    'properties': {'title': 'Божья благодать', 'locale': 'ru_RU'},
     'sheets': [{'properties': {'sheetType': 'GRID',
                                'sheetId': 0,
                                'title': 'Лист раз',
