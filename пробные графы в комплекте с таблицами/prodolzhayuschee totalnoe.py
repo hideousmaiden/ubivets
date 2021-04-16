@@ -58,84 +58,119 @@ results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, bo
 
 
 #Статусрайтер
+rrr=2
+for rrr in range (2;1000)
+    ranges: {
+         "sheetId": shit_id,
+        "startRowIndex": rrr,
+        "endRowIndex": rrr+1,
+        "startColumnIndex": 1,
+        "endColumnIndex": 2
+    } #
 
-results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
-body = {
-    "valueInputOption": "USER_ENTERED",
-    "data": [
-        {"range":
-    {
-    "sheetId": rosheet
-    "startRowIndex": id+1,
-    "endRowIndex": id+2,
-    "startColumnIndex": 2,
-    "endColumnIndex": 3
-    },
-         "majorDimension": "ROWS",
-         "values": [[status],]}
-    ]
-}).execute()
-
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    sss = results['values']
+    if sss==chat_id
+        nnn=rrr
+        rrr=rrr+1000
+        results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
+            body = {
+                "valueInputOption": "USER_ENTERED",
+                "data": [
+                     {"range":
+                         {
+                            "sheetId": shit_id
+                            "startRowIndex": nnn,
+                            "endRowIndex": nnn+1,
+                            "startColumnIndex": 3,
+                            "endColumnIndex": 4
+                         },
+                     "majorDimension": "ROWS",
+                     "values": [[status],]}
+                        ]
+            }).execute()
+    else rrr=rrr+1    
 
 #Писатели
 
 #Друг
-scid=id+1
-ecid=id+2
-results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
-    "valueInputOption": "USER_ENTERED",
-    "data": [
-        {"range": {
-            "sheetId": rosheet,
-            "startRowIndex": scid,
-            "endRowIndex": ecid,
-            "startColumnIndex": 4,
-            "endColumnIndex": 5
-            }} # ,
-         "majorDimension": "ROWS",
-         "values": [
-                    [text]
-                   ]}
+rrr=2
+for rrr in range (2;1000)
+    ranges: {
+         "sheetId": shit_id,
+        "startRowIndex": rrr,
+        "endRowIndex": rrr+1,
+        "startColumnIndex": 1,
+        "endColumnIndex": 2
+    } #
+
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    sss = results['values']
+    if sss==chat_id
+        nnn=rrr
+        rrr=rrr+1000
+        results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
+             "valueInputOption": "USER_ENTERED",
+             "data": [
+                 {"range": {
+                       "sheetId": shit_id,
+                       "startRowIndex": nnn,
+                       "endRowIndex": nnn+1,
+                       "startColumnIndex": 4,
+                       "endColumnIndex": 5
+                  }} # ,
+             "majorDimension": "ROWS",
+             "values": [
+                        [text]
+                      ]}
     ]
-}).execute()
+            }).execute()
+    else rrr=rrr+1    
+
 
 
 #ЗАГС
 rrr=2
 for rrr in range (2;1000)
-ranges: {
-    "sheetId": rosheet,
-    "startRowIndex": rrr,
-    "endRowIndex": rrr+1,
-    "startColumnIndex": 3,
-    "endColumnIndex": 4
-    } #
+    ranges: {
+        "sheetId": shit_id,
+        "startRowIndex": rrr,
+        "endRowIndex": rrr+1,
+        "startColumnIndex": 3,
+        "endColumnIndex": 4
+        } #
 
-results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
                                      valueRenderOption = 'FORMATTED_VALUE',
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
-sss = results['values']
-if sss==''
-    nnn=rrr
-    rrr=rrr+1000
-    results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
-    body = {
-        "valueInputOption": "USER_ENTERED",
-        "data": [
-            {"range":
-        {
-        "sheetId": rosheet,
-        "startRowIndex": nnn+1,
-        "endRowIndex": nnn+2,
-        "startColumnIndex": 0,
-        "endColumnIndex": 2
-        },
-             "majorDimension": "ROWS",
-             "values": [[nnn+2, m, "role"],]}
-        ]
-    }).execute()
-rrr=rrr+1
+    sss = results['values']
+    if sss==''
+        nnn=rrr
+        rrr=rrr+1000
+        results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
+        body = {
+            "valueInputOption": "USER_ENTERED",
+            "data": [
+                {"range":
+            {
+            "sheetId": rosheet,
+            "startRowIndex": nnn+1,
+            "endRowIndex": nnn+2,
+            "startColumnIndex": 0,
+            "endColumnIndex": 2
+            },
+                "majorDimension": "ROWS",
+                "values": [[nnn+2, m, "role"],]}
+            ]
+        }).execute()
+    else rrr=rrr+1
 
 
 
