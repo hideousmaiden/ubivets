@@ -4,7 +4,6 @@ import csv
 import httplib2
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
-import networkx as nx
 
 CREDENTIALS_FILE = 'cybersep-310108-c1268b1fb570.json'
 
@@ -29,151 +28,223 @@ token = '1555845859:AAFT12GCr7l-vK8S67KGtqUAyOVM7_hl7Vc'
 bot = tb.TeleBot(token, parse_mode=None)
 
 def status_writer(id, status):
-    well = 'ЖЕНЯ СДЕЛАЙ'
+    rrr=2
+for rrr in range (2;1000):
+    ranges: {
+         "sheetId": shit_id,
+        "startRowIndex": rrr,
+        "endRowIndex": rrr+1,
+        "startColumnIndex": 1,
+        "endColumnIndex": 2
+    } #
 
-def add_friend(chat_id, text):
-    well = 'ДОПИСАТЬ ПОЛУЧЕННЫЙ ТЕКСТ В ФАЙЛ В СПИСОК ЗНАКОМЦЕВ ПОЛЬЗОВАТЕЛЯ'
-
-def separator(shit_id):
-    result = service.spreadsheets().values().get(spreadsheetId=shit_id, range="A1:A500").execute()
-    rows = result.get('values')
-    length = len(rows) #количество строчек в таблице
-    edges = []
-    isolat = []
-    column_name = 'C' #столбец с именами
-    column_conn = 'E' #столбец со знакомыми
-    column_vict = 'F' #колонка с жертвами
-    column_stat = 'D' #колонка со статусами
-
-    for number in range(2,length+1):
-        cell_name = column_name + str(number)
-        result = service.spreadsheets().values().get(spreadsheetId=shit_id, range=cell_name).execute()
-        name = result.get('values')
-        cell_stat = column_stat + str(number)
-        result = service.spreadsheets().values().get(
-        spreadsheetId=shit_id, range=cell_stat).execute()
-        stat = result.get('values')
-        cell_conn = column_conn + str(number)
-        result = service.spreadsheets().values().get(
-        spreadsheetId=shit_id, range=cell_conn).execute()
-        conn = result.get('values')
-        if stat[0][0] == 'Участник':
-            if conn != None:
-                links = conn[0][0].split(';')
-                for elem in links:
-                    link = []
-                    link.append(name[0][0])
-                    link.append(elem)
-                    edges.append(tuple(link))
-            else:
-                isolat.append(name[0][0])
-
-#графы
-    final_cycles = []
-    weighted_edges = []
-    mutual_edges = []
-    limit = 0
-    raw_graph = nx.DiGraph()
-    raw_graph.add_edges_from(edges)
-    raw_graph.add_nodes_from(isolat)
-    nodes = raw_graph.nodes
-    for edge_number in range(len(edges)):
-        rev_edge = list(edges[edge_number])
-        rev_edge.reverse()
-        if tuple(rev_edge) not in edges:
-             raw_graph.remove_edge(edges[edge_number][0], edges[edge_number][1])
-    paths = nx.shortest_path(raw_graph)
-    no_conn_rate = len(nodes) + 1
-    weighted_edges = []
-    for start in paths:
-        for target in nodes:
-            if start != target:
-                if target in paths[start]:
-                    weight = len(paths[start][target])
-                else:
-                    weight = no_conn_rate
-                if weight > limit:
-                    weighted_edge = []
-                    weighted_edge.append(start)
-                    weighted_edge.append(target)
-                    weighted_edge.append(weight)
-                    weighted_edges.append(tuple(weighted_edge))
-    weighted_graph = nx.DiGraph()
-    weighted_graph.add_weighted_edges_from(weighted_edges)
-    final_paths =  weighted_graph.adj
-    cycles = list(nx.simple_cycles(weighted_graph))
-    if len(cycles) == 0:
-        print('измените значение limit')
-    else:
-        for cycle in cycles:
-            if len(cycle) == len(nodes):
-                reversed = []
-                reversed.append(cycle[0])
-                part = cycle[1:len(cycle)]
-                part.reverse()
-                reversed.extend(part)
-                if reversed not in final_cycles:
-                    final_cycles.append(cycle)
-        max_count = 0
-        for cycle in final_cycles:
-            cycle_count = 0
-            for n_number in range(len(nodes) - 1):
-                start = cycle[n_number]
-                target = cycle[n_number + 1]
-                cycle_count += final_paths[start][target]['weight']
-            cycle_count += final_paths[cycle[-1]][cycle[0]]['weight']
-            if cycle_count > max_count:
-                max_count = cycle_count
-                best_cycle = cycle
-#запись в фаил
-    for number in range(2,length+1):
-        cell_name = column_name + str(number)
-        result = service.spreadsheets().values().get(
-        spreadsheetId=shit_id, range=cell_name).execute()
-        name = result.get('values')
-        cell_vict = column_vict + str(number)
-        for num in range(len(best_cycle)):
-            if name[0][0] == best_cycle[num] and num != (len(best_cycle) - 1):
-                empt_l = []
-                empt_ll = []
-                empt_l.append(best_cycle[num+1])
-                empt_ll.append(empt_l)
-                results = service.spreadsheets().values().batchUpdate(spreadsheetId = shit_id, body = {
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    sss = results['values']
+    if sss==chat_id:
+        nnn=rrr
+        rrr=rrr+1000
+        results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
+            body = {
                 "valueInputOption": "USER_ENTERED",
                 "data": [
-                    {"range": cell_vict,
-                     "values": empt_ll}]
+                     {"range":
+                         {
+                            "sheetId": shit_id
+                            "startRowIndex": nnn,
+                            "endRowIndex": nnn+1,
+                            "startColumnIndex": 3,
+                            "endColumnIndex": 4
+                         },
+                     "majorDimension": "ROWS",
+                     "values": [[status],]}
+                        ]
             }).execute()
-            elif name[0][0] == best_cycle[num] and num == (len(best_cycle) - 1):
-                empt_l = []
-                empt_ll = []
-                empt_l.append(best_cycle[0])
-                empt_ll.append(empt_l)
-                results = service.spreadsheets().values().batchUpdate(spreadsheetId = shit_id, body = {
-                    "valueInputOption": "USER_ENTERED",
-                    "data": [
-                    {"range": cell_vict,
-                     "values": empt_ll}]
-            }).execute()   
-    
+    else:
+         rrr=rrr+1
+
+def add_friend(chat_id, text):
+    rrr=2
+    for rrr in range (2;1000):
+        ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": rrr,
+            "endRowIndex": rrr+1,
+            "startColumnIndex": 1,
+            "endColumnIndex": 2
+                } #
+
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    sss = results['values']
+    if sss==chat_id:
+        nnn=rrr
+        rrr=rrr+1000
+        ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": nnn,
+            "endRowIndex": nnn+1,
+            "startColumnIndex": 4,
+            "endColumnIndex": 5
+                } #
+
+                results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        befff = results['values']
+        results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
+             "valueInputOption": "USER_ENTERED",
+             "data": [
+                 {"range": {
+                       "sheetId": shit_id,
+                       "startRowIndex": nnn,
+                       "endRowIndex": nnn+1,
+                       "startColumnIndex": 4,
+                       "endColumnIndex": 5
+                  }} # ,
+             "majorDimension": "ROWS",
+             "values": [
+                        [befff, ';', text]
+                      ]}
+                      ]
+            }).execute()
+    else:
+         rrr=rrr+1
+
 def id_check(id):
-    ids = 'ДОСТАТЬ ИЗ ФАЙЛА'
+    ranges: {
+    "sheetId": shit_id,
+    "startRowIndex": 2,
+    "endRowIndex": 1000,
+    "startColumnIndex": 1,
+    "endColumnIndex": 2
+    } #
+
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    ids = results['values']
+
     if id not in ids:
-        well = 'ЗАПИСАТЬ АЙДИ В ФАЙЛ'
-        command_start(id)
-        status_writer(id, 'role')
+        rrr=2
+        for rrr in range (2;1000):
+            ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": rrr,
+            "endRowIndex": rrr+1,
+            "startColumnIndex": 3,
+            "endColumnIndex": 4
+            } #
+
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+            sss = results['values']
+            if sss==''
+                nnn=rrr
+                rrr=rrr+1000
+                results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
+                body = {
+                "valueInputOption": "USER_ENTERED",
+                "data": [
+                {"range":
+                {
+                "sheetId": shit_id,
+                "startRowIndex": nnn,
+                "endRowIndex": nnn+1,
+                "startColumnIndex": 1,
+                "endColumnIndex": 2
+                },
+                "majorDimension": "ROWS",
+                "values": [[chat_id],]}
+                    ]
+                    }).execute()
+            else:
+                rrr=rrr+1
+    command_start(id)
+    status_writer(id, 'role')
 
 def stats_reg(chat_id):
-    result = 'ДОСТАТЬ ИЗ ФАЙЛА СКОЛЬКО ЧЕЛОВЕК ЗАРЕГИСТРИРОВАЛОСЬ НА ИГРУ ЭТОГО ОРГАНИЗАТОРА'
+    rrr=2
+    kkk=0
+    for rrr in range (2;1000):
+        ranges: {
+        "sheetId": shit_id,
+        "startRowIndex": rrr,
+        "endRowIndex": rrr+1,
+        "startColumnIndex": 3,
+        "endColumnIndex": 4
+            } #
+
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        sss = results['values']
+        rrr=rrr+1
+        if sss=='regd':#НУЖНЫ СТАТУС
+            kkk=kkk+1
+
+    result=kkk
     bot.send_message(chat_id, "Уже зарегистрировалось" + result + "человек")
 
 def stats_quest(chat_id):
-    result = 'ДОСТАТЬ ИЗ ФАЙЛА СКОЛЬКО ЧЕЛОВЕК УЖЕ ПРОШЛО ОПРОС У ЭТОГО ОРГАНИЗАТОРА'
+    rrr=2
+    kkk=0
+    for rrr in range (2;1000):
+        ranges: {
+        "sheetId": shit_id,
+        "startRowIndex": rrr,
+        "endRowIndex": rrr+1,
+        "startColumnIndex": 3,
+        "endColumnIndex": 4
+            } #
+
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        sss = results['values']
+        rrr=rrr+1
+        if sss=='questd':#НУЖНЫ СТАТУС
+            kkk=kkk+1
+    result=kkk
     bot.send_message(chat_id, "Уже прошло опрос" + result + "человек")
 
 def stats_game(chat_id):
-    result_kill = 'ДОСТАТЬ ИЗ ФАЙЛА КОЛИЧЕСТВО УБИТЫХ'
-    result_live = 'ДОСТАТЬ ИЗ ФАЙЛА ЖИВУЧИХ'
+    rrr=2
+    kkk=0
+    lll=0
+    for rrr in range (2;1000):
+        ranges: {
+        "sheetId": shit_id,
+        "startRowIndex": rrr,
+        "endRowIndex": rrr+1,
+        "startColumnIndex": 3,
+        "endColumnIndex": 4
+            } #
+
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        sss = results['values']
+        rrr=rrr+1
+        if sss=='done':#НУЖНЫ СТАТУС
+            kkk=kkk+1
+
+        if sss=='pl':
+            lll=lll+1
+
+    result_kill=kkk
+    result_live=lll
     bot.send_message(chat_id, "Вышло из игры" + result_kill + "человек, а ещё играет " + result_live + 'человек')
 
 def command_start(chat_id):
@@ -191,17 +262,78 @@ def part_gamenametaker(text, chat_id):
     bot.send_message(chat_id, "Такой текущей партии нет, попробуй ещё раз")
 
 def part_nametaker(text, chat_id):
-    names = 'ДОСТАТЬ ИЗ ФАЙЛА'
+    ranges: {
+    "sheetId": shit_id,
+    "startRowIndex": 2,
+    "endRowIndex": 1000,
+    "startColumnIndex": 2,
+    "endColumnIndex": 3
+    } #
+
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    names = results['values']
+
     if text in names:
         bot.send_message(chat_id, "Это имя уже занято, попробуй ещё раз")
     else:
-        bot.send_message(chat_id, "Ура, регистрация пройдена! Жди начала опроса.")
-        status_writer(chat_id, 'regd')
+        rrr=2
+        for rrr in range (2;1000):
+            ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": rrr,
+            "endRowIndex": rrr+1,
+            "startColumnIndex": 3,
+            "endColumnIndex": 4
+            } #
+
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+            sss = results['values']
+            if sss==chat_id:
+                nnn=rrr
+                rrr=rrr+1000
+                results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
+                body = {
+                "valueInputOption": "USER_ENTERED",
+                "data": [
+                {"range":
+                    {
+                    "sheetId": shit_id,
+                    "startRowIndex": nnn,
+                    "endRowIndex": nnn+1,
+                    "startColumnIndex": 2,
+                    "endColumnIndex": 3
+                    },
+                "majorDimension": "ROWS",
+                "values": [[text],]}
+            ]
+                }).execute()
+            else:
+                rrr=rrr+1
+    bot.send_message(chat_id, "Ура, регистрация пройдена! Жди начала опроса.")
+    status_writer(chat_id, 'regd')
 
 def part_quest(chat_id):
     status_writer(chat_id, 'quest')
     keyb_q = types.ReplyKeyboardMarkup()
-    names = 'ДОСТАТЬ СПИСОК ФАМИЛИЙ ИЗ ФАЙЛА'
+    ranges: {
+    "sheetId": shit_id,
+    "startRowIndex": 2,
+    "endRowIndex": 1000,
+    "startColumnIndex": 2,
+    "endColumnIndex": 3
+        } #
+
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    names = results['values']
     keyb_q.add(types.KeyboardButton(n) for n in names)
     n = types.KeyboardButton('Готово!')
     keyb_q.add(n)
@@ -213,15 +345,177 @@ def part_endquest(chat_id):
     bot.send_message(chat_id, "Осталось дождаться начала игры!")
 
 def part_startgame(chat_id):
-    pray = 'ДОСТАТЬ ИЗ ФАЙЛА'
+    rrr=2
+    for rrr in range (2;1000):
+        ranges: {
+        "sheetId": shit_id,
+        "startRowIndex": rrr,
+        "endRowIndex": rrr+1,
+        "startColumnIndex": 1,
+        "endColumnIndex": 2
+            } #
+
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                 ranges = ranges,
+                                 valueRenderOption = 'FORMATTED_VALUE',
+                                 dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        sss = results['values']
+        if sss==chat_id:
+            nnn=rrr
+            rrr=rrr+1000
+            ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": nnn,
+            "endRowIndex": nnn+1,
+            "startColumnIndex": 5,
+            "endColumnIndex": 6
+                } #
+
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+            pray=results
+        else:
+            rrr=rrr+1
     status_writer(chat_id, 'pl')
     bot.send_message(сhat_id, "Игра началась! Сейчас твоя задача - застать свою жертву наедине без свидетелей и сказать ей \"Тебя поймали\". После этого пойманный тобой человек должен при тебе написать боту со своего устройства \"меня нашли\", и тебе придёт имя новой жертвы. Остерегайся, ведь не только ты сегодня охотишься!\n Твоя первая цель - ", pray)
 
 def part_killed(chat_id):
     status_writer(chat_id, 'done')
     bot.send_message(chat_id, "Ты выбыл_а из игры, эта погоня была легендарной. Когда игра закончится, ты узнаешь имена победителей")
-    killer_id = 'ДОСТАТЬ ИЗ ФАЙЛА'
-    new_pray = 'ДОСТАТЬ ИЗ ФАЙЛА в строчке  chat_id'
+    rrr=2
+    for rrr in range (2;1000):
+        ranges: {
+        "sheetId": shit_id,
+        "startRowIndex": rrr,
+        "endRowIndex": rrr+1,
+        "startColumnIndex": 1,
+        "endColumnIndex": 2
+        } #
+
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                 ranges = ranges,
+                                 valueRenderOption = 'FORMATTED_VALUE',
+                                 dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        sss = results['values']
+        if sss==chat_id:
+            nnn=rrr
+            rrr=rrr+1000
+            ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": rrr,
+            "endRowIndex": rrr+1,
+            "startColumnIndex": 2,
+            "endColumnIndex": 3
+            } #
+
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+            ubit=results
+            hhh=2
+            for hhh in range(2;1000):
+                ranges: {
+                "sheetId": shit_id,
+                "startRowIndex": hhh,
+                "endRowIndex": hhh+1,
+                "startColumnIndex": 5,
+                "endColumnIndex":
+                } #
+
+                results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                         ranges = ranges,
+                                         valueRenderOption = 'FORMATTED_VALUE',
+                                         dateTimeRenderOption = 'FORMATTED_STRING').execute()
+                jjj=results
+                if jjj==ubit:
+                    mmm=hhh
+                    hhh=hhh+1000
+                    ranges: {
+                    "sheetId": shit_id,
+                    "startRowIndex": mmm,
+                    "endRowIndex": mmm+1,
+                    "startColumnIndex": 2,
+                    "endColumnIndex": 3
+                    } #
+
+                    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                             ranges = ranges,
+                                             valueRenderOption = 'FORMATTED_VALUE',
+                                             dateTimeRenderOption = 'FORMATTED_STRING').execute()
+                    svo=results
+                else:
+                    hhh=hhh+1
+        else:
+            rrr=rrr+1
+    zzz=2
+    for zzz in range (2;1000):
+        ranges: {
+        "sheetId": shit_id,
+        "startRowIndex": zzz,
+        "endRowIndex": zzz+1,
+        "startColumnIndex": 2,
+        "endColumnIndex": 3
+        } #
+
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                 ranges = ranges,
+                                 valueRenderOption = 'FORMATTED_VALUE',
+                                 dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        you=results
+        if you==svo:
+            ddd=zzz
+            zzz=zzz+1000
+            ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": ddd,
+            "endRowIndex": ddd+1,
+            "startColumnIndex": 1,
+            "endColumnIndex": 2
+            } #
+
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+            killer_id = results
+        else:
+            zzz=zzz+1
+    aaa=2
+    for aaa in range(2;1000):
+        ranges: {
+        "sheetId": shit_id,
+        "startRowIndex": aaa,
+        "endRowIndex": aaa+1,
+        "startColumnIndex": 1,
+        "endColumnIndex": 2
+            } #
+
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                             ranges = ranges,
+                             valueRenderOption = 'FORMATTED_VALUE',
+                             dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        aaaaa=results
+        if aaaaa==chat_id:
+            ppp=aaa
+            aaa=aaa+1000
+            ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": ppp,
+            "endRowIndex": ppp+1,
+            "startColumnIndex": 5,
+            "endColumnIndex": 6
+            } #
+
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+            new_pray = results
+        else:
+            aaa=aaa+1
     bot.send_message(killer_id, "Успехх! Твоя новая цель - ", new_pray)
 
 def org_gamenametaker(text, chat_id):
@@ -244,7 +538,19 @@ def org_gamenametaker(text, chat_id):
         return sh_id
 
 def org_startquest(chat_id):
-    ids = 'ДОСТАТЬ ЯБЫ ВСЕХ УЧАСТНИКОВ ИЗ ФАЙЛА'
+    ranges: {
+    "sheetId": shit_id,
+    "startRowIndex": 2,
+    "endRowIndex": 1000,
+    "startColumnIndex": 1,
+    "endColumnIndex": 2
+        } #
+
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    ids = results['values']
     keyb_org = types.ReplyKeyboardRemove()
     keyb_orgq = types.ReplyKeyboardMarkup()
     act_1 = types.KeyboardButton('Сколько человек уже прошло опрос?')
@@ -259,7 +565,42 @@ def org_start(chat_id, text):
     if text == 'Сколько человек уже прошло опрос?':
         stats_reg(chat_id)
     elif text == 'Я тоже хочу участвовать в игре':
-        well = 'ЗАПИСАТЬ АЙДИ В ФАЙЛ повторно'
+        rrr=2
+        for rrr in range (2;1000):
+            ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": rrr,
+            "endRowIndex": rrr+1,
+            "startColumnIndex": 3,
+            "endColumnIndex": 4
+            } #
+
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+            sss = results['values']
+            if sss==''
+                nnn=rrr
+                rrr=rrr+1000
+                results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
+                body = {
+                "valueInputOption": "USER_ENTERED",
+                "data": [
+                {"range":
+                {
+                "sheetId": shit_id,
+                "startRowIndex": nnn,
+                "endRowIndex": nnn+1,
+                "startColumnIndex": 1,
+                "endColumnIndex": 2
+                },
+                "majorDimension": "ROWS",
+                "values": [[chat_id],]}
+                    ]
+                    }).execute()
+            else:
+                rrr=rrr+1#!!!
         keyb_org = types.ReplyKeyboardRemove
         bot.send_message(chat_id, "Введите своё имя и фамилию")
         status_writer(user_id, 'partn')
@@ -272,8 +613,19 @@ def org_quest(chat_id, text):
     elif text == 'Завершить прохождение опросов и начать игру':
         keyb_orgq = types.ReplyKeyboardRemove
         status_writer(chat_id, 'orggame')
-        separator(shit_id)
-        ids = 'ДОСТАТЬ ИЗ ФАЙЛА'
+        ranges: {
+        "sheetId": shit_id,
+        "startRowIndex": 2,
+        "endRowIndex": 1000,
+        "startColumnIndex": 1,
+        "endColumnIndex": 2
+            } #
+
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                         ranges = ranges,
+                                         valueRenderOption = 'FORMATTED_VALUE',
+                                         dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        ids = results['values']
         for some_id in ids:
             part_startgame(some_id)
         keyb_orgp = types.ReplyKeyboardMarkup()
@@ -287,8 +639,50 @@ def org_game(chat_id, text):
     if text =='Статистика':
         stats_game(chat_id)
     elif text == 'Принудительно завершить игру':
-        ids = 'ДОСТАТЬ ИЗ ФАЙЛА'
-        winner = 'ДОСТАТЬ'
+        ranges: {
+        "sheetId": shit_id,
+        "startRowIndex": 2,
+        "endRowIndex": 1000,
+        "startColumnIndex": 1,
+        "endColumnIndex": 2
+            } #
+
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                         ranges = ranges,
+                                         valueRenderOption = 'FORMATTED_VALUE',
+                                         dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        ids = results['values']
+        rrr=2
+        for rrr in range (2;1000):
+            ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": rrr,
+            "endRowIndex": rrr+1,
+            "startColumnIndex": 3,
+            "endColumnIndex": 4
+                } #
+
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+            sss = results['values']
+            if sss=='pl':#НУЖНЫ СТАТУС
+                wwww=rrr
+                ranges: {
+                "sheetId": shit_id,
+                "startRowIndex": wwww,
+                "endRowIndex": wwww+1,
+                "startColumnIndex": 2,
+                "endColumnIndex": 3
+                    } #
+
+                results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                         ranges = ranges,
+                                         valueRenderOption = 'FORMATTED_VALUE',
+                                         dateTimeRenderOption = 'FORMATTED_STRING').execute()
+                winner=results
+            rrr=rrr+1
         for some_id in ids:
             status_writer(some_id, done)
             bot.send_message(some_id, 'Игра закончена. !! Победитель - ' + winner)
@@ -300,7 +694,40 @@ def main_body(m):
     user_text = m.text
     user_id = m.chat.id
     id_check(user_id)
-    user_state = 'ДОСТАТЬ ИЗ ФАЙЛА' #ЖЕНЯ СДЕЛАЙ
+    rrr=2
+    for rrr in range (2;1000):
+        ranges: {
+            "sheetId": shit_id,
+            "startRowIndex": rrr,
+            "endRowIndex": rrr+1,
+            "startColumnIndex": 1,
+            "endColumnIndex": 2
+            } #
+
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        sss = results['values']
+        if sss==user_id:
+           nnn=rrr
+           rrr=rrr+1000
+           ranges: {
+           "sheetId": shit_id,
+           "startRowIndex": nnn,
+           "endRowIndex": nnn+1,
+           "startColumnIndex": 3,
+           "endColumnIndex": 4
+           } #
+
+           results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                            ranges = ranges,
+                                            valueRenderOption = 'FORMATTED_VALUE',
+                                            dateTimeRenderOption = 'FORMATTED_STRING').execute()
+            user_state = results['values']
+        else:
+         rrr=rrr+1
+     #ЖЕНЯ СДЕЛАЙ
     if user_text == '\help':
         bot.send_message(user_id, 'бог поможет')
 
