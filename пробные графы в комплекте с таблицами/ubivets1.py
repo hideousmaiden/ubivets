@@ -6,26 +6,23 @@ from oauth2client.service_account import ServiceAccountCredentials
 length = 6 #количество строчек в таблице
 edges = []
 isolat = []
-column_name = 'A' #столбец с именами
-column_conn = 'B' #столбец со знакомыми
-column_vict = 'C' #колонка с жертвами
-column_stat = 'D' #колонка со статусами
-CREDENTIALS_FILE = 'ubivets1-da74a14302d5.json'
-credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets',
-                                                                                  'https://www.googleapis.com/auth/drive'])
-service = apiclient.discovery.build('sheets', 'v4', credentials=credentials)
+column_name = 'B' #столбец с именами
+column_conn = 'D' #столбец со знакомыми
+column_vict = 'E' #колонка с жертвами
+column_stat = 'C' #колонка со статусами
+
 for number in range(2,length+1):
     cell_name = column_name + str(number)
     result = service.spreadsheets().values().get(
-    spreadsheetId='1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU', range=cell_name).execute()
+    spreadsheetId=fifile, range=cell_name).execute()
     name = result.get('values')
     cell_stat = column_stat + str(number)
     result = service.spreadsheets().values().get(
-    spreadsheetId='1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU', range=cell_stat).execute()
+    spreadsheetId=fifile, range=cell_stat).execute()
     stat = result.get('values')
     cell_conn = column_conn + str(number)
     result = service.spreadsheets().values().get(
-    spreadsheetId='1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU', range=cell_conn).execute()
+    spreadsheetId=fifile, range=cell_conn).execute()
     conn = result.get('values')
     if stat[0][0] == 'Участник':
         if conn != None:
@@ -99,7 +96,7 @@ else:
 for number in range(2,length+1):
     cell_name = column_name + str(number)
     result = service.spreadsheets().values().get(
-    spreadsheetId='1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU', range=cell_name).execute()
+    spreadsheetId=fifile, range=cell_name).execute()
     name = result.get('values')
     cell_vict = column_vict + str(number)
     for num in range(len(best_cycle)):
@@ -108,7 +105,7 @@ for number in range(2,length+1):
             empt_ll = []
             empt_l.append(best_cycle[num+1])
             empt_ll.append(empt_l)
-            results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU', body = {
+            results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
                 "valueInputOption": "USER_ENTERED",
                 "data": [
                     {"range": cell_vict,
@@ -119,7 +116,7 @@ for number in range(2,length+1):
             empt_ll = []
             empt_l.append(best_cycle[0])
             empt_ll.append(empt_l)
-            results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1wZByQb2aARqsp0UUyCvUleCvQ_Ta29BiQ9sqGWIWmYU', body = {
+            results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
                 "valueInputOption": "USER_ENTERED",
                 "data": [
                     {"range": cell_vict,
