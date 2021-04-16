@@ -32,6 +32,42 @@ def part_gamenametaker(text, chat_id):
     for sheet in sheetlist:
         if title==text:
             shit_id = sheetId
+            rrr=2
+            for rrr in range (2,1000):
+                ranges: {
+                "sheetId": shit_id,
+                "startRowIndex": rrr,
+                "endRowIndex": rrr+1,
+                "startColumnIndex": 1,
+                "endColumnIndex": 2
+                } #
+
+                results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                         ranges = ranges,
+                                         valueRenderOption = 'FORMATTED_VALUE',
+                                         dateTimeRenderOption = 'FORMATTED_STRING').execute()
+                sss = results['values']
+                if sss == '':
+                    nnn = rrr
+                    rrr = rrr + 1000
+                    results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
+                    body = {
+                    "valueInputOption": "USER_ENTERED",
+                    "data": [
+                    {"range":
+                    {
+                    "sheetId": shit_id,
+                    "startRowIndex": nnn,
+                    "endRowIndex": nnn+1,
+                    "startColumnIndex": 1,
+                    "endColumnIndex": 2
+                    },
+                    "majorDimension": "ROWS",
+                    "values": [[chat_id],]}
+                        ]
+                        }).execute()
+                else:
+                    rrr=rrr+1
             status_writer(chat_id, 'partn')
             bot.send_message(chat_id, "Введи своё имя и фамилию")
             return shit_id
@@ -254,13 +290,7 @@ def add_friend(chat_id, text):
          rrr=rrr+1
 
 def id_check(id):
-    ranges = {
-    "sheetId": shit_id,
-    "startRowIndex": 2,
-    "endRowIndex": 1000,
-    "startColumnIndex": 1,
-    "endColumnIndex": 2
-    } #
+    ranges = {"range": 'Лист раз!A1:A1000'}
 
     results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
@@ -275,8 +305,8 @@ def id_check(id):
             "sheetId": shit_id,
             "startRowIndex": rrr,
             "endRowIndex": rrr+1,
-            "startColumnIndex": 3,
-            "endColumnIndex": 4
+            "startColumnIndex": 1,
+            "endColumnIndex": 2
             } #
 
             results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
@@ -592,10 +622,10 @@ def part_killed(chat_id):
                                  ranges = ranges,
                                  valueRenderOption = 'FORMATTED_VALUE',
                                  dateTimeRenderOption = 'FORMATTED_STRING').execute()
-        you=results
-        if you==svo:
-            ddd=zzz
-            zzz=zzz+1000
+        you = results
+        if you == svo:
+            ddd = zzz
+            zzz = zzz + 1000
             ranges: {
             "sheetId": shit_id,
             "startRowIndex": ddd,
@@ -610,8 +640,8 @@ def part_killed(chat_id):
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
             killer_id = results
         else:
-            zzz=zzz+1
-    aaa=2
+            zzz = zzz + 1
+    aaa = 2
     for aaa in range(2,1000):
         ranges: {
         "sheetId": shit_id,
@@ -625,10 +655,10 @@ def part_killed(chat_id):
                              ranges = ranges,
                              valueRenderOption = 'FORMATTED_VALUE',
                              dateTimeRenderOption = 'FORMATTED_STRING').execute()
-        aaaaa=results
-        if aaaaa==chat_id:
-            ppp=aaa
-            aaa=aaa+1000
+        aaaaa = results
+        if aaaaa == chat_id:
+            ppp = aaa
+            aaa = aaa + 1000
             ranges: {
             "sheetId": shit_id,
             "startRowIndex": ppp,
