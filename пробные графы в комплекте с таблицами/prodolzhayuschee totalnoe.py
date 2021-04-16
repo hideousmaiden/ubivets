@@ -15,6 +15,9 @@ fifile = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg' #здесь надо б�
 
 
 #новы лист под партию
+for sheet in sheetlist:
+    if title==text:
+        
 results = service.spreadsheets().batchUpdate(
     spreadsheetId = fifile,
     body =
@@ -34,8 +37,9 @@ results = service.spreadsheets().batchUpdate(
   ]
 }).execute()
 
-for sheet if title=='Листок': rosheet = (sheet['properties']['sheetId'])
-else: rosheet = 0
+#проверяем есть ли введённое участником название игры в табличке
+for sheet if title==text: rosheet = (sheet['properties']['sheetId'])
+else: rosheet = 0 
 
 #Заголовки
 results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
