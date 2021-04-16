@@ -12,7 +12,7 @@ CREDENTIALS_FILE = 'cybersep-310108-c1268b1fb570.json'
 credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'])
 
 httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
-service = apiclient.discovery.build('sheets', 'v4', http = httpAuth)
+service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
 
 
 fifile = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg' #здесь надо будет вставить адрес табличьки, когда она появитс
@@ -27,6 +27,15 @@ sheetlist = spreadsheet.get('sheets')
 
 token = '1555845859:AAFT12GCr7l-vK8S67KGtqUAyOVM7_hl7Vc'
 bot = tb.TeleBot(token, parse_mode=None)
+
+def part_gamenametaker(text, chat_id):
+    for sheet in sheetlist:
+        if title==text:
+            shit_id = sheetId
+            status_writer(chat_id, 'partn')
+            bot.send_message(chat_id, "Введи своё имя и фамилию")
+            return shit_id
+    bot.send_message(chat_id, "Такой текущей партии нет, попробуй ещё раз")
 
 def thats_all(shit_id):
     rangeAll = 'A1:Z'
@@ -157,23 +166,23 @@ def separator(shit_id):
 
 def status_writer(id, status):
     rrr=2
-for rrr in range (2,1000):
-    ranges: {
+    for rrr in range (2,1000):
+        ranges: {
          "sheetId": shit_id,
         "startRowIndex": rrr,
         "endRowIndex": rrr+1,
         "startColumnIndex": 1,
         "endColumnIndex": 2
-    } #
+        } #
 
     results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
                                      valueRenderOption = 'FORMATTED_VALUE',
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
     sss = results['values']
-    if sss==chat_id:
-        nnn=rrr
-        rrr=rrr+1000
+    if sss == chat_id:
+        nnn = rrr
+        rrr = rrr + 1000
         results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
             body = {
                 "valueInputOption": "USER_ENTERED",
@@ -191,10 +200,10 @@ for rrr in range (2,1000):
                         ]
             }).execute()
     else:
-         rrr=rrr+1
+         rrr = rrr + 1
 
 def add_friend(chat_id, text):
-    rrr=2
+    rrr = 2
     for rrr in range (2,1000):
         ranges: {
             "sheetId": shit_id,
@@ -245,7 +254,7 @@ def add_friend(chat_id, text):
          rrr=rrr+1
 
 def id_check(id):
-    ranges: {
+    ranges = {
     "sheetId": shit_id,
     "startRowIndex": 2,
     "endRowIndex": 1000,
@@ -379,15 +388,6 @@ def command_start(chat_id):
     keyb_first = types.ReplyKeyboardMarkup()
     keyb_first.add(types.KeyboardButton(el) for el in ['Организатор', 'Участник'])
     bot.send_message(chat_id, "Привет!\nВыбери свою роль:", reply_markup=keyb_first)
-
-def part_gamenametaker(text, chat_id):
-    for sheet in sheetlist:
-        if title==text:
-            sh_id = sheetId
-            status_writer(chat_id, 'partn')
-            bot.send_message(chat_id, "Введи своё имя и фамилию")
-            return sh_id
-    bot.send_message(chat_id, "Такой текущей партии нет, попробуй ещё раз")
 
 def part_nametaker(text, chat_id):
     ranges: {
