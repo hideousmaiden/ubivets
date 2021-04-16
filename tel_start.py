@@ -3,7 +3,7 @@ import networkx as nx
 from telebot import types
 import csv
 import httplib2
-import apiclient.discovery
+import googleapiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
 CREDENTIALS_FILE = 'cybersep-310108-c1268b1fb570.json'
@@ -153,11 +153,11 @@ def separator(shit_id):
                     "data": [
                     {"range": cell_vict,
                      "values": empt_ll}]
-            }).execute()    
+            }).execute()
 
 def status_writer(id, status):
     rrr=2
-for rrr in range (2;1000):
+for rrr in range (2,1000):
     ranges: {
          "sheetId": shit_id,
         "startRowIndex": rrr,
@@ -180,7 +180,7 @@ for rrr in range (2;1000):
                 "data": [
                      {"range":
                          {
-                            "sheetId": shit_id
+                            "sheetId": shit_id,
                             "startRowIndex": nnn,
                             "endRowIndex": nnn+1,
                             "startColumnIndex": 3,
@@ -195,7 +195,7 @@ for rrr in range (2;1000):
 
 def add_friend(chat_id, text):
     rrr=2
-    for rrr in range (2;1000):
+    for rrr in range (2,1000):
         ranges: {
             "sheetId": shit_id,
             "startRowIndex": rrr,
@@ -220,7 +220,7 @@ def add_friend(chat_id, text):
             "endColumnIndex": 5
                 } #
 
-                results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
                                      valueRenderOption = 'FORMATTED_VALUE',
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
@@ -234,8 +234,8 @@ def add_friend(chat_id, text):
                        "endRowIndex": nnn+1,
                        "startColumnIndex": 4,
                        "endColumnIndex": 5
-                  }} # ,
-             "majorDimension": "ROWS",
+                  }},
+             {"majorDimension": "ROWS",
              "values": [
                         [befff, ';', text]
                       ]}
@@ -261,7 +261,7 @@ def id_check(id):
 
     if id not in ids:
         rrr=2
-        for rrr in range (2;1000):
+        for rrr in range (2,1000):
             ranges: {
             "sheetId": shit_id,
             "startRowIndex": rrr,
@@ -275,9 +275,9 @@ def id_check(id):
                                      valueRenderOption = 'FORMATTED_VALUE',
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
             sss = results['values']
-            if sss==''
-                nnn=rrr
-                rrr=rrr+1000
+            if sss == '':
+                nnn = rrr
+                rrr = rrr + 1000
                 results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
                 body = {
                 "valueInputOption": "USER_ENTERED",
@@ -302,7 +302,7 @@ def id_check(id):
 def stats_reg(chat_id):
     rrr=2
     kkk=0
-    for rrr in range (2;1000):
+    for rrr in range (2,1000):
         ranges: {
         "sheetId": shit_id,
         "startRowIndex": rrr,
@@ -326,7 +326,7 @@ def stats_reg(chat_id):
 def stats_quest(chat_id):
     rrr=2
     kkk=0
-    for rrr in range (2;1000):
+    for rrr in range (2,1000):
         ranges: {
         "sheetId": shit_id,
         "startRowIndex": rrr,
@@ -350,7 +350,7 @@ def stats_game(chat_id):
     rrr=2
     kkk=0
     lll=0
-    for rrr in range (2;1000):
+    for rrr in range (2,1000):
         ranges: {
         "sheetId": shit_id,
         "startRowIndex": rrr,
@@ -408,7 +408,7 @@ def part_nametaker(text, chat_id):
         bot.send_message(chat_id, "Это имя уже занято, попробуй ещё раз")
     else:
         rrr=2
-        for rrr in range (2;1000):
+        for rrr in range (2,1000):
             ranges: {
             "sheetId": shit_id,
             "startRowIndex": rrr,
@@ -474,7 +474,7 @@ def part_endquest(chat_id):
 
 def part_startgame(chat_id):
     rrr=2
-    for rrr in range (2;1000):
+    for rrr in range (2,1000):
         ranges: {
         "sheetId": shit_id,
         "startRowIndex": rrr,
@@ -513,7 +513,7 @@ def part_killed(chat_id):
     status_writer(chat_id, 'done')
     bot.send_message(chat_id, "Ты выбыл_а из игры, эта погоня была легендарной. Когда игра закончится, ты узнаешь имена победителей")
     rrr=2
-    for rrr in range (2;1000):
+    for rrr in range (2,1000):
         ranges: {
         "sheetId": shit_id,
         "startRowIndex": rrr,
@@ -544,14 +544,14 @@ def part_killed(chat_id):
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
             ubit=results
             hhh=2
-            for hhh in range(2;1000):
+            for hhh in range(2,1000):
                 ranges: {
                 "sheetId": shit_id,
                 "startRowIndex": hhh,
                 "endRowIndex": hhh+1,
                 "startColumnIndex": 5,
-                "endColumnIndex":
-                } #
+                "endColumnIndex":6
+                }
 
                 results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                          ranges = ranges,
@@ -579,7 +579,7 @@ def part_killed(chat_id):
         else:
             rrr=rrr+1
     zzz=2
-    for zzz in range (2;1000):
+    for zzz in range (2,1000):
         ranges: {
         "sheetId": shit_id,
         "startRowIndex": zzz,
@@ -612,7 +612,7 @@ def part_killed(chat_id):
         else:
             zzz=zzz+1
     aaa=2
-    for aaa in range(2;1000):
+    for aaa in range(2,1000):
         ranges: {
         "sheetId": shit_id,
         "startRowIndex": aaa,
@@ -694,7 +694,7 @@ def org_start(chat_id, text):
         stats_reg(chat_id)
     elif text == 'Я тоже хочу участвовать в игре':
         rrr=2
-        for rrr in range (2;1000):
+        for rrr in range (2,1000):
             ranges: {
             "sheetId": shit_id,
             "startRowIndex": rrr,
@@ -708,9 +708,9 @@ def org_start(chat_id, text):
                                      valueRenderOption = 'FORMATTED_VALUE',
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
             sss = results['values']
-            if sss==''
-                nnn=rrr
-                rrr=rrr+1000
+            if sss == '':
+                nnn = rrr
+                rrr = rrr + 1000
                 results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile,
                 body = {
                 "valueInputOption": "USER_ENTERED",
@@ -781,8 +781,8 @@ def org_game(chat_id, text):
                                          valueRenderOption = 'FORMATTED_VALUE',
                                          dateTimeRenderOption = 'FORMATTED_STRING').execute()
         ids = results['values']
-        rrr=2
-        for rrr in range (2;1000):
+        rrr = 2
+        for rrr in range (2,1000):
             ranges: {
             "sheetId": shit_id,
             "startRowIndex": rrr,
@@ -825,24 +825,24 @@ def main_body(m):
     user_id = m.chat.id
     id_check(user_id)
     rrr=2
-    for rrr in range (2;1000):
+    for rrr in range(2,1000):
         ranges: {
             "sheetId": shit_id,
             "startRowIndex": rrr,
             "endRowIndex": rrr+1,
             "startColumnIndex": 1,
             "endColumnIndex": 2
-            } #
+            }
 
-            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
                                      valueRenderOption = 'FORMATTED_VALUE',
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
         sss = results['values']
-        if sss==user_id:
-           nnn=rrr
-           rrr=rrr+1000
-           ranges: {
+        if sss == user_id:
+            nnn = rrr
+            rrr = rrr + 1000
+            ranges: {
            "sheetId": shit_id,
            "startRowIndex": nnn,
            "endRowIndex": nnn+1,
@@ -850,13 +850,13 @@ def main_body(m):
            "endColumnIndex": 4
            } #
 
-           results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                             ranges = ranges,
                                             valueRenderOption = 'FORMATTED_VALUE',
                                             dateTimeRenderOption = 'FORMATTED_STRING').execute()
-            user_state = results['values']
-        else:
-         rrr=rrr+1
+        user_state = results['values']
+    else:
+        rrr = rrr + 1
      #ЖЕНЯ СДЕЛАЙ
     if user_text == '\help':
         bot.send_message(user_id, 'бог поможет')
