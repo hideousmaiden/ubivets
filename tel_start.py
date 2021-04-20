@@ -298,7 +298,7 @@ def id_check(id):
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
     ids = results['values']
 
-    if id not in ids:
+    if [str(id)] not in ids:
         rrr=2
         for rrr in range (2,1000):
             ranges: {
