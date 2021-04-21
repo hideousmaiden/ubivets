@@ -704,7 +704,7 @@ def main_body(m):
             part_killed(user_id)
 
         elif user_state == 'orgreg':
-        org_start(user_id, user_text)
+            org_start(user_id, user_text)
 
         elif user_state == 'orgquest':
             org_quest(user_id, user_text)
