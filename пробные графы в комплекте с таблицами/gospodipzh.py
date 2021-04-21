@@ -59,7 +59,7 @@ def part_gamenametaker(text, chat_id):
                     }).execute()
                 else:
                     rrr=rrr+1
-            status_writer(chat_id, 'partn')
+            status_writer_zero(chat_id, 'partn')
             bot.send_message(chat_id, "Введи своё имя и фамилию")
             return shit_name
     bot.send_message(chat_id, "Такой текущей партии нет, попробуй ещё раз")
@@ -490,7 +490,7 @@ def org_gamenametaker(text, chat_id):
                          "values": [['0'+chat_id],]}]
                     }).execute()
         shit_name = text
-        status_writer('0'+chat_id, orgreg)
+        status_writer_zero('0'+chat_id, orgreg)
         keyb_org = types.ReplyKeyboardMarkup
         act_1 = types.KeyboardButton('Сколько человек уже зарегистрировалось?')
         act_2 = types.KeyboardButton('Я тоже хочу участвовать в игре')
@@ -608,7 +608,12 @@ def main_body(m):
     shit_name = '0'
     user_text = m.text
     user_id = m.chat.id
-    if id_check(user_id):
+
+    if user_text == '\help':
+        bot.send_message(user_id, 'бог поможет')
+    thing_id = id_check(user_id)
+    thing_zero = zero_status(user_id)
+    if thing_id or thing_zero:
         shit_name = '0'
     rrr=2
     for rrr in range(2,500):
@@ -631,43 +636,40 @@ def main_body(m):
                 user_state = results['valueRanges'][0]['values']
             else:
                 rrr = rrr + 1
-     #ЖЕНЯ СДЕЛАЙ
-    if user_text == '\help':
-        bot.send_message(user_id, 'бог поможет')
+    if thing:
+        if user_state == 'role':
+            keyb_first = types.ReplyKeyboardRemove()
+            if user_text == 'Организатор':
+                bot.send_message(user_id, "Введите кодовое имя для вашей игры:")
+                status_writer_zero(user_id, 'ogamen')
+            elif user_text == 'Участник':
+                bot.send_message(chat_id, 'Введи кодовое слово игры, в которой ты участвуешь', reply_markup=keyb_first)
+                status_writer_zero(user_id, 'gamen')
+    elif thing_zero:
+        if user_state == 'gamen':
+            shit_id = part_gamenametaker(user_text, user_id)
 
-    if user_state == 'role':
-        keyb_first = types.ReplyKeyboardRemove()
-        if user_text == 'Организатор':
-            bot.send_message(user_id, "Введите кодовое имя для вашей игры:")
-            status_writer(user_id, 'ogamen')
-        elif user_text == 'Участник':
-            bot.send_message(chat_id, 'Введи кодовое слово игры, в которой ты участвуешь', reply_markup=keyb_first)
-            status_writer(user_id, 'gamen')
+        elif user_state == 'ogamen':
+            shit_id = org_gamenametaker(user_text, user_id)
+    else:
+        if user_state == 'partn':
+            part_nametaker(user_text, user_id)
 
-    elif user_state == 'gamen':
-        shit_id = part_gamenametaker(user_text, user_id)
+        elif user_state == 'quest':
+            if user_text == 'Готово!':
+                part_endquest(user_id)
+            else:
+                add_friend(user_id, user_text)
+        elif user_state == 'pl' and user_text == 'меня нашли':
+            part_killed(user_id)
 
-    elif user_state == 'partn':
-        part_nametaker(user_text, user_id)
-
-    elif user_state == 'quest':
-        if user_text == 'Готово!':
-            part_endquest(user_id)
-        else:
-            add_friend(user_id, user_text)
-    elif user_state == 'pl' and user_text == 'меня нашли':
-        part_killed(user_id)
-
-    elif user_state == 'ogamen':
-        shit_id = org_gamenametaker(user_text, user_id)
-
-    elif user_state == 'orgreg':
+        elif user_state == 'orgreg':
         org_start(user_id, user_text)
 
-    elif user_state == 'orgquest':
-        org_quest(user_id, user_text)
+        elif user_state == 'orgquest':
+            org_quest(user_id, user_text)
 
-    elif user_state == 'orggame':
-        org_game(user_id, user_text)
+        elif user_state == 'orggame':
+            org_game(user_id, user_text)
 
 bot.polling()
