@@ -6,7 +6,7 @@ import httplib2
 import googleapiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 CREDENTIALS_FILE = 'cybersep-310108-c1268b1fb570.json'
-
+shit_name = '0'
 # Читаем ключи из файла
 credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'])
 
@@ -247,21 +247,21 @@ def id_check(id):
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
     ids = results['valueRanges'][0]['values']
 
-    if id not in ids:
+    if [str(id)] not in ids:
         length = len(ids)
         results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
             "valueInputOption": "USER_ENTERED",
             "data": [
                 {"range": "0!A"+str(length + 1),
                  "majorDimension": "ROWS",
-                 "values": [[id],['role']]}]}).execute()
-        command_start(id)
+                 "values": [[id]]}]}).execute()
         results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
-        "valueInputOption": "USER_ENTERED",
-        "data": [
-            {"range": "0!A"+str(length + 1),
-             "majorDimension": "ROWS",
-             "values": [[id],]}]}).execute()
+                     "valueInputOption": "USER_ENTERED",
+                     "data": [
+                         {"range": "0!B"+str(length + 1),
+                          "majorDimension": "ROWS",
+                          "values": [['role']]}]}).execute()
+        command_start(id)
         return True
 
 def stats_reg(chat_id):
@@ -605,30 +605,32 @@ def org_game(chat_id, text):
 
 @bot.message_handler(content_types=['text'])
 def main_body(m):
+    shit_name = '0'
     user_text = m.text
     user_id = m.chat.id
     if id_check(user_id):
         shit_name = '0'
     rrr=2
-    for rrr in range(2,1000):
+    for rrr in range(2,500):
         ranges = [shit_name+"!A"+str(rrr)] #
         results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
                                      valueRenderOption = 'FORMATTED_VALUE',
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
 
-        sss = results['valueRanges'][0]['values']
-        if sss == user_id:
-            nnn = rrr
-            rrr = rrr + 1000
-            ranges = [shit_name+"!"+column_stat+str(nnn)] #
-            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+        if 'values' in results['valueRanges'][0]:
+            sss = results['valueRanges'][0]['values']
+            if sss == user_id:
+                nnn = rrr
+                rrr = rrr + 1000
+                ranges = [shit_name+"!"+column_stat+str(nnn)] #
+                results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
                                      valueRenderOption = 'FORMATTED_VALUE',
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
-            user_state = results['valueRanges'][0]['values']
-        else:
-            rrr = rrr + 1
+                user_state = results['valueRanges'][0]['values']
+            else:
+                rrr = rrr + 1
      #ЖЕНЯ СДЕЛАЙ
     if user_text == '\help':
         bot.send_message(user_id, 'бог поможет')
