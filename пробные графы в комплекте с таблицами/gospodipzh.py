@@ -324,6 +324,46 @@ def command_start(chat_id):
     for el in ['Организатор', 'Участник']:
         keyb_first.add(types.KeyboardButton(el))
     bot.send_message(chat_id, "Привет!\nВыбери свою роль:", reply_markup=keyb_first)
+def status_writer_zero(id, status):
+    rrr=2
+    for rrr in range (2,1000):
+        ranges = ["0!A"+str(rrr)] #
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        sss = results['valueRanges'][0]['values']
+        if sss == chat_id:
+            nnn = rrr
+            rrr = rrr + 1000
+            results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
+                "valueInputOption": "USER_ENTERED",
+                "data": [
+                    {"range": "0!B"+str(nnn),
+                     "majorDimension": "ROWS",
+                     "values": [[status],]}
+            ]}).execute()
+        else:
+            rrr = rrr + 1
+def zero_status(id):
+    rrr = 2
+    for rrr in range(2,1000):
+        ranges = ['0' + '!A' + str(rrr)]
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        if 'values' in results:
+            sss = results['valueRanges'][0]['values']
+            if sss==chat_id:
+                ranges = ['0' + '!B' + str(rrr)]
+                results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                         ranges = ranges,
+                                         valueRenderOption = 'FORMATTED_VALUE',
+                                         dateTimeRenderOption = 'FORMATTED_STRING').execute()
+                sss = results['valueRanges'][0]['values']
+                if sss == ['gamen'] or sss == ['ogamen']:
+                    return True
 
 def part_nametaker(text, chat_id):
     ranges = [shit_name+"!"+column_name+"2:"+column_name+"1000"] #
