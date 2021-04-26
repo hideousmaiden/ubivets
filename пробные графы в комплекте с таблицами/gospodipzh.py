@@ -305,7 +305,13 @@ def command_start(chat_id):
                                  valueRenderOption = 'FORMATTED_VALUE',
                                  dateTimeRenderOption = 'FORMATTED_STRING').execute()
     sss = results['valueRanges'][0]['values']
-    results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {"valueInputOption": "USER_ENTERED", "data": [{"range": 'A' + str((len(sss) + 1)) + ':' + 'B' + str((len(sss) + 1)), "majorDimension": "ROWS", "values": [[id, 'role'],]}]}).execute()
+    results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
+        "valueInputOption": "USER_ENTERED",
+        "data": [
+            {"range": 'A' + str((len(sss) + 1)) + ':' + 'B' + str((len(sss) + 1)),
+             "majorDimension": "ROWS",
+             "values": [[id, 'role'],]}]
+        }).execute()
     keyb_first = types.ReplyKeyboardMarkup()
     for el in ['Организатор', 'Участник']:
         keyb_first.add(types.KeyboardButton(el))
