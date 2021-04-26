@@ -2,7 +2,6 @@ import telebot as tb
 import networkx as nx
 from telebot import types
 import csv
-import gspread
 import httplib2
 import googleapiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
@@ -252,34 +251,6 @@ def add_friend(chat_id, text):
              "values": [[befff, ';', text],]}
     ]}).execute()
 
-def id_check(id):
-    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    nnn=3
-    ranges = ['0!A1:A150']
-    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                     ranges = ranges,
-                                     valueRenderOption = 'FORMATTED_VALUE',
-                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
-    ids = results['valueRanges'][0]['values']
-
-    if [str(id)] not in ids:
-        length = len(ids)
-        results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
-            "valueInputOption": "USER_ENTERED",
-            "data": [
-                {"range": "0!A"+str(length + 1),
-                 "majorDimension": "ROWS",
-                 "values": [[id]]}]}).execute()
-        results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
-                     "valueInputOption": "USER_ENTERED",
-                     "data": [
-                         {"range": "0!B"+str(length + 1),
-                          "majorDimension": "ROWS",
-                          "values": [['role']]}]}).execute()
-        command_start(id)
-        return True
-
 def stats_reg(chat_id):
     rrr=2
     kkk=0
@@ -336,56 +307,11 @@ def stats_game(chat_id):
     bot.send_message(chat_id, "Вышло из игры" + result_kill + "человек, а ещё играет " + result_live + 'человек')
 
 def command_start(chat_id):
+    #todo записать айди и статус role в фаел
     keyb_first = types.ReplyKeyboardMarkup()
     for el in ['Организатор', 'Участник']:
         keyb_first.add(types.KeyboardButton(el))
     bot.send_message(chat_id, "Привет!\nВыбери свою роль:", reply_markup=keyb_first)
-
-def status_writer_zero(id, status):
-    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    for rrr in range (2,200):
-        ranges = ["0!A"+str(rrr)] #
-        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                     ranges = ranges,
-                                     valueRenderOption = 'FORMATTED_VALUE',
-                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
-        sss = results['valueRanges'][0]['values']
-        if sss == chat_id:
-            nnn = rrr
-            rrr += 1000
-            break
-    results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
-        "valueInputOption": "USER_ENTERED",
-        "data": [
-            {"range": "0!B"+str(nnn),
-             "majorDimension": "ROWS",
-             "values": [[status],]}
-    ]}).execute()
-
-def zero_status(id):
-    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    for rrr in range(2,200):
-        ranges = ['0' + '!A' + str(rrr)]
-        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                     ranges = ranges,
-                                     valueRenderOption = 'FORMATTED_VALUE',
-                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
-        if 'values' in results:
-            sss = results['valueRanges'][0]['values']
-            print(sss)
-            if sss == id:
-                ranges = ['0' + '!B' + str(rrr)]
-                results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                         ranges = ranges,
-                                         valueRenderOption = 'FORMATTED_VALUE',
-                                         dateTimeRenderOption = 'FORMATTED_STRING').execute()
-                sss = results['valueRanges'][0]['values']
-                if sss == ['gamen'] or sss == ['ogamen'] or sss == ['role']:
-                    return sss[0]
-                else:
-                    return False
 
 def part_nametaker(text, chat_id):
     ranges = [shit_name+"!"+column_name+"2:"+column_name+"1000"] #
@@ -664,74 +590,45 @@ def org_game(chat_id, text):
         bot.send_message(chat_id, 'Ваша игра завершена. Надеемся, все повеселились. Мы открыты для отзывов и предложений: ')
         thats_all(shit_id)
 
+def roletaker(chat_id, text):
+    keyb_first = types.ReplyKeyboardRemove()
+    if text == 'Организатор':
+        bot.send_message(user_id, "Введите кодовое имя для вашей игры:", reply_markup=keyb_first)
+        status_writer(user_id, 'ogamen')
+    elif text == 'Участник':
+        bot.send_message(chat_id, 'Введи кодовое слово игры, в которой ты участвуешь', reply_markup=keyb_first)
+        status_writer(user_id, 'gamen')
 
 @bot.message_handler(content_types=['text'])
 def main_body(m):
-    shit_name = '0'
     user_text = m.text
     user_id = m.chat.id
-
     if user_text == '\help':
         bot.send_message(user_id, 'бог поможет')
-    thing_id = id_check(user_id)
-    thing_zero = zero_status(user_id)
-    print(thing_id, thing_zero)
-    if thing_id or thing_zero:
-        shit_name = '0'
-    else:
-        for rrr in range(2,500):
-            httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
-            service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-            ranges = [shit_name+"!A"+str(rrr)] #
-            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                         ranges = ranges,
-                                         valueRenderOption = 'FORMATTED_VALUE',
-                                         dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    user_state = great_check(user_id)
 
-            if 'values' in results['valueRanges'][0]:
-                sss = results['valueRanges'][0]['values']
-                if sss == user_id:
-                    nnn = rrr
-                    rrr += 1000
-                    break
-        ranges = [shit_name+"!"+column_stat+str(nnn)]
-        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                             ranges = ranges,
-                             valueRenderOption = 'FORMATTED_VALUE',
-                             dateTimeRenderOption = 'FORMATTED_STRING').execute()
-        user_state = results['valueRanges'][0]['values']
-
-    if thing_zero == 'role':
-        keyb_first = types.ReplyKeyboardRemove()
-        if user_text == 'Организатор':
-            bot.send_message(user_id, "Введите кодовое имя для вашей игры:")
-            status_writer_zero(user_id, 'ogamen')
-        elif user_text == 'Участник':
-            bot.send_message(chat_id, 'Введи кодовое слово игры, в которой ты участвуешь', reply_markup=keyb_first)
-            status_writer_zero(user_id, 'gamen')
-    elif thing_zero == 'gamen':
-        shit_id = part_gamenametaker(user_text, user_id)
-    elif thing_zero == 'ogamen':
-        shit_id = org_gamenametaker(user_text, user_id)
-    elif thing_id == False:
-        if user_state == 'partn':
-            part_nametaker(user_text, user_id)
-
-        elif user_state == 'quest':
+    if user_state == 'role':
+        roletaker(user_id, user_text)
+    elif user_state == 'gamen':
+        part_gamenametaker(user_text, user_id)
+    elif user_state == 'ogamen':
+        org_gamenametaker(user_text, user_id)
+    elif user_state == 'partn':
+        part_nametaker(user_text, user_id)
+    elif user_state == 'quest':
             if user_text == 'Готово!':
                 part_endquest(user_id)
             else:
                 add_friend(user_id, user_text)
-        elif user_state == 'pl' and user_text == 'меня нашли':
-            part_killed(user_id)
-
-        elif user_state == 'orgreg':
-            org_start(user_id, user_text)
-
-        elif user_state == 'orgquest':
-            org_quest(user_id, user_text)
-
-        elif user_state == 'orggame':
-            org_game(user_id, user_text)
+    elif user_state == 'pl' and user_text == 'меня нашли':
+        part_killed(user_id)
+    elif user_state == 'orgreg':
+        org_start(user_id, user_text)
+    elif user_state == 'orgquest':
+        org_quest(user_id, user_text)
+    elif user_state == 'orggame':
+        org_game(user_id, user_text)
+    else:
+        command_start(user_id)
 
 bot.polling()
