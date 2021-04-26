@@ -14,7 +14,7 @@ httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в 
 service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
 
 
-fifile = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg' #здесь надо будет вставить адрес табличьки, когда она появитс
+fifile = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg'
 
 spreadsheet = service.spreadsheets().get(spreadsheetId = fifile).execute()
 sheetlist = spreadsheet.get('sheets')
