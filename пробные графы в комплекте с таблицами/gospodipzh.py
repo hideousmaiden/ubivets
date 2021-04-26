@@ -298,7 +298,14 @@ def stats_game(chat_id):
     bot.send_message(chat_id, "Вышло из игры" + result_kill + "человек, а ещё играет " + result_live + 'человек')
 
 def command_start(chat_id):
-    #todo записать айди и статус role в фаел
+    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
+    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                 ranges = 'A1:A',
+                                 valueRenderOption = 'FORMATTED_VALUE',
+                                 dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    sss = results['valueRanges'][0]['values']
+    results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {"valueInputOption": "USER_ENTERED", "data": [{"range": 'A' + str((len(sss) + 1)) + ':' + 'B' + str((len(sss) + 1)), "majorDimension": "ROWS", "values": [[id, 'role'],]}]}).execute()
     keyb_first = types.ReplyKeyboardMarkup()
     for el in ['Организатор', 'Участник']:
         keyb_first.add(types.KeyboardButton(el))
