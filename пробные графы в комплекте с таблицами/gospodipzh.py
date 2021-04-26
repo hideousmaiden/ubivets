@@ -2,6 +2,7 @@ import telebot as tb
 import networkx as nx
 from telebot import types
 import csv
+import gspread
 import httplib2
 import googleapiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
@@ -33,6 +34,16 @@ column_uch = 'F'
 
 token = '1555845859:AAFT12GCr7l-vK8S67KGtqUAyOVM7_hl7Vc'
 bot = tb.TeleBot(token, parse_mode=None)
+
+def great_check(id):
+    httpAuth = credentials.authorize(httplib2.Http())
+    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
+    sheet = client.open('Табличька')
+    sheet_instance = sheet.get_worksheet(0)
+    records_data = sheet_instance.get_all_values()
+    for line in records_data:
+        if line[0] == str(id):
+            return line[1]
 
 def part_gamenametaker(text, chat_id):
     for sheet in sheetlist:
