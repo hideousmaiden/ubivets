@@ -2,6 +2,7 @@ import telebot as tb
 import networkx as nx
 from telebot import types
 import csv
+import gspread
 import httplib2
 import googleapiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
