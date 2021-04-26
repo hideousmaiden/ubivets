@@ -193,7 +193,8 @@ def separator(shit_id):
 
 
 def status_writer(id, status):
-    rrr=2
+    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
+    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
     for rrr in range (2,1000):
         ranges = [shit_name+"!A"+str(rrr)] #
         results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
@@ -202,21 +203,20 @@ def status_writer(id, status):
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
         sss = results['valueRanges'][0]['values']
         if sss == chat_id:
-            nnn = rrr
-            rrr = rrr + 1000
-            results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
-                "valueInputOption": "USER_ENTERED",
-                "data": [
-                    {"range": shit_name+"!"+column_stat+str(nnn),
-                     "majorDimension": "ROWS",
-                     "values": [[status],]}
-            ]}).execute()
-        else:
-            rrr = rrr + 1
+            break
+    nnn = rrr
+    rrr = rrr + 1000
+    results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
+        "valueInputOption": "USER_ENTERED",
+        "data": [
+            {"range": shit_name+"!"+column_stat+str(nnn),
+             "majorDimension": "ROWS",
+             "values": [[status],]}
+    ]}).execute()
 
 def add_friend(chat_id, text):
     rrr = 2
-    for rrr in range (2,1000):
+    for rrr in range (2,200):
         ranges = [shit_name+"!A"+str(rrr)] #
         results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
@@ -226,25 +226,26 @@ def add_friend(chat_id, text):
         if sss==chat_id:
             nnn=rrr
             rrr=rrr+1000
-            ranges = [shit_name+"!"+column_conn+str(nnn)] #
-            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                     ranges = ranges,
-                                     valueRenderOption = 'FORMATTED_VALUE',
-                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
-            befff = results['valueRanges'][0]['values']
-            results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
-                "valueInputOption": "USER_ENTERED",
-                "data": [
-                    {"range": shit_name+"!"+column_conn+str(nnn),
-                     "majorDimension": "ROWS",
-                     "values": [[befff, ';', text],]}
-            ]}).execute()
-        else:
-            rrr=rrr+1
+            break
+    ranges = [shit_name+"!"+column_conn+str(nnn)] #
+    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                             ranges = ranges,
+                             valueRenderOption = 'FORMATTED_VALUE',
+                             dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    befff = results['valueRanges'][0]['values']
+    results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
+        "valueInputOption": "USER_ENTERED",
+        "data": [
+            {"range": shit_name+"!"+column_conn+str(nnn),
+             "majorDimension": "ROWS",
+             "values": [[befff, ';', text],]}
+    ]}).execute()
 
 def id_check(id):
+    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
+    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
     nnn=3
-    ranges = ['0!A1:A1000']
+    ranges = ['0!A1:A150']
     results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
                                      valueRenderOption = 'FORMATTED_VALUE',
@@ -328,9 +329,11 @@ def command_start(chat_id):
     for el in ['Организатор', 'Участник']:
         keyb_first.add(types.KeyboardButton(el))
     bot.send_message(chat_id, "Привет!\nВыбери свою роль:", reply_markup=keyb_first)
+
 def status_writer_zero(id, status):
-    rrr=2
-    for rrr in range (2,1000):
+    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
+    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
+    for rrr in range (2,200):
         ranges = ["0!A"+str(rrr)] #
         results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
@@ -339,19 +342,20 @@ def status_writer_zero(id, status):
         sss = results['valueRanges'][0]['values']
         if sss == chat_id:
             nnn = rrr
-            rrr = rrr + 1000
-            results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
-                "valueInputOption": "USER_ENTERED",
-                "data": [
-                    {"range": "0!B"+str(nnn),
-                     "majorDimension": "ROWS",
-                     "values": [[status],]}
-            ]}).execute()
-        else:
-            rrr = rrr + 1
+            rrr += 1000
+            break
+    results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
+        "valueInputOption": "USER_ENTERED",
+        "data": [
+            {"range": "0!B"+str(nnn),
+             "majorDimension": "ROWS",
+             "values": [[status],]}
+    ]}).execute()
+
 def zero_status(id):
-    rrr = 2
-    for rrr in range(2,1000):
+    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
+    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
+    for rrr in range(2,200):
         ranges = ['0' + '!A' + str(rrr)]
         results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                      ranges = ranges,
@@ -359,15 +363,18 @@ def zero_status(id):
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
         if 'values' in results:
             sss = results['valueRanges'][0]['values']
-            if sss==chat_id:
+            print(sss)
+            if sss == id:
                 ranges = ['0' + '!B' + str(rrr)]
                 results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
                                          ranges = ranges,
                                          valueRenderOption = 'FORMATTED_VALUE',
                                          dateTimeRenderOption = 'FORMATTED_STRING').execute()
                 sss = results['valueRanges'][0]['values']
-                if sss == ['gamen'] or sss == ['ogamen']:
-                    return True
+                if sss == ['gamen'] or sss == ['ogamen'] or sss == ['role']:
+                    return sss[0]
+                else:
+                    return False
 
 def part_nametaker(text, chat_id):
     ranges = [shit_name+"!"+column_name+"2:"+column_name+"1000"] #
@@ -657,45 +664,45 @@ def main_body(m):
         bot.send_message(user_id, 'бог поможет')
     thing_id = id_check(user_id)
     thing_zero = zero_status(user_id)
+    print(thing_id, thing_zero)
     if thing_id or thing_zero:
         shit_name = '0'
-    rrr=2
-    for rrr in range(2,500):
-        ranges = [shit_name+"!A"+str(rrr)] #
-        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                     ranges = ranges,
-                                     valueRenderOption = 'FORMATTED_VALUE',
-                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
-
-        if 'values' in results['valueRanges'][0]:
-            sss = results['valueRanges'][0]['values']
-            if sss == user_id:
-                nnn = rrr
-                rrr = rrr + 1000
-                ranges = [shit_name+"!"+column_stat+str(nnn)] #
-                results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                     ranges = ranges,
-                                     valueRenderOption = 'FORMATTED_VALUE',
-                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
-                user_state = results['valueRanges'][0]['values']
-            else:
-                rrr = rrr + 1
-    if thing:
-        if user_state == 'role':
-            keyb_first = types.ReplyKeyboardRemove()
-            if user_text == 'Организатор':
-                bot.send_message(user_id, "Введите кодовое имя для вашей игры:")
-                status_writer_zero(user_id, 'ogamen')
-            elif user_text == 'Участник':
-                bot.send_message(chat_id, 'Введи кодовое слово игры, в которой ты участвуешь', reply_markup=keyb_first)
-                status_writer_zero(user_id, 'gamen')
-    elif thing_zero:
-        if user_state == 'gamen':
-            shit_id = part_gamenametaker(user_text, user_id)
-
-        elif user_state == 'ogamen':
-            shit_id = org_gamenametaker(user_text, user_id)
     else:
+        for rrr in range(2,500):
+            httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
+            service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
+            ranges = [shit_name+"!A"+str(rrr)] #
+            results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                         ranges = ranges,
+                                         valueRenderOption = 'FORMATTED_VALUE',
+                                         dateTimeRenderOption = 'FORMATTED_STRING').execute()
+
+            if 'values' in results['valueRanges'][0]:
+                sss = results['valueRanges'][0]['values']
+                if sss == user_id:
+                    nnn = rrr
+                    rrr += 1000
+                    break
+        ranges = [shit_name+"!"+column_stat+str(nnn)]
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                             ranges = ranges,
+                             valueRenderOption = 'FORMATTED_VALUE',
+                             dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        user_state = results['valueRanges'][0]['values']
+
+    if thing_zero == 'role':
+        keyb_first = types.ReplyKeyboardRemove()
+        if user_text == 'Организатор':
+            bot.send_message(user_id, "Введите кодовое имя для вашей игры:")
+            status_writer_zero(user_id, 'ogamen')
+        elif user_text == 'Участник':
+            bot.send_message(chat_id, 'Введи кодовое слово игры, в которой ты участвуешь', reply_markup=keyb_first)
+            status_writer_zero(user_id, 'gamen')
+    elif thing_zero == 'gamen':
+        shit_id = part_gamenametaker(user_text, user_id)
+    elif thing_zero == 'ogamen':
+        shit_id = org_gamenametaker(user_text, user_id)
+    elif thing_id == False:
         if user_state == 'partn':
             part_nametaker(user_text, user_id)
 
