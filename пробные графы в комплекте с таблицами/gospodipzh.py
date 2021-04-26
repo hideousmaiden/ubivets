@@ -203,27 +203,18 @@ def separator(shit_id):
 
 
 def status_writer(id, status):
-    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
+    httpAuth = credentials.authorize(httplib2.Http())
     service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    for rrr in range (2,1000):
-        ranges = [shit_name+"!A"+str(rrr)] #
-        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                     ranges = ranges,
-                                     valueRenderOption = 'FORMATTED_VALUE',
-                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
-        sss = results['valueRanges'][0]['values']
-        if sss == chat_id:
-            break
-    nnn = rrr
-    rrr = rrr + 1000
-    results = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
-        "valueInputOption": "USER_ENTERED",
-        "data": [
-            {"range": shit_name+"!"+column_stat+str(nnn),
-             "majorDimension": "ROWS",
-             "values": [[status],]}
-    ]}).execute()
-
+    sheet = client.open('Табличька')
+    sheet_instance = sheet.get_worksheet(0)
+    records_data = sheet_instance.get_all_values()
+    for n in range(len(records_data)):
+        if records_data[n][0] == str(id):
+            records_data[n][1] = status
+    results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
+    "valueInputOption": "USER_ENTERED",
+    "data": [{"range": 'A1:E1000', "values": records_data}]}).execute()
+                
 def add_friend(chat_id, text):
     rrr = 2
     for rrr in range (2,200):
