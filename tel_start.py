@@ -47,19 +47,23 @@ def part_gamenametaker(text, chat_id):
     if text not in games:
         bot.send_message(chat_id, "Такой текущей партии нет, попробуй ещё раз")
     else:
-        client = gspread.authorize(credentials)
-        sheet = client.open('Табличька')
-        sheet_instance = sheet.get_worksheet(0)
-        records_data = sheet_instance.get_all_values()
-        for n in range(len(records_data)):
-            if records_data[n][0] == str(chat_id):
-                records_data[n][2] = text
-                break
-        results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
-        "valueInputOption": "USER_ENTERED",
-        "data": [{"range": 'A1:E1000', "values": records_data}]}).execute()
-        status_writer(chat_id, 'partn')
-        bot.send_message(chat_id, "Введи своё имя и фамилию: ")
+        parts_stats = {k[1] for k in names if k[2] == text}
+        if 'orgreg' in part_stats:
+            client = gspread.authorize(credentials)
+            sheet = client.open('Табличька')
+            sheet_instance = sheet.get_worksheet(0)
+            records_data = sheet_instance.get_all_values()
+            for n in range(len(records_data)):
+                if records_data[n][0] == str(chat_id):
+                    records_data[n][2] = text
+                    break
+            results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
+            "valueInputOption": "USER_ENTERED",
+            "data": [{"range": 'A1:F1000', "values": records_data}]}).execute()
+            status_writer(chat_id, 'partn')
+            bot.send_message(chat_id, "Введи своё имя и фамилию: ")
+        else:
+            bot.send_message(chat_id, "Регистрация на эту игру уже закончилась, попробуй снова")
 
 def separator(id):
     client = gspread.authorize(credentials)
@@ -189,7 +193,7 @@ def add_friend(chat_id, text):
             records_data[n][4] += text
     results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
     "valueInputOption": "USER_ENTERED",
-    "data": [{"range": 'A1:F1000', "values": records_data}]}).execute()
+    "data": [{"range": 'A1:F', "values": records_data}]}).execute()
 
 def stats_reg(chat_id):
     result = 0
@@ -286,21 +290,13 @@ def part_nametaker(text, chat_id):
                 records_data[n][3] = text
         results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
         "valueInputOption": "USER_ENTERED",
-        "data": [{"range": 'A1:E1000', "values": records_data}]}).execute()
+        "data": [{"range": 'A1:F1000', "values": records_data}]}).execute()
         bot.send_message(chat_id, "Ура, регистрация пройдена! Жди начала опроса.")
         status_writer(chat_id, 'regd')
 
-def part_quest(chat_id):
+def part_quest(chat_id, records_data, game_name):
     status_writer(chat_id, 'quest')
     keyb_q = types.ReplyKeyboardMarkup()
-    client = gspread.authorize(credentials)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
-    for n in range(len(records_data)):
-        if records_data[n][0] == str(chat_id):
-            game_name = records_data[n][2]
-            break
     names = {records_data[p][3] for p in range(len(records_data)) if records_data[p][2] == game_name and records_data[p][1] != 'partn' and records_data[p][0] != chat_id}
     for name in names: keyb_q.add(types.KeyboardButton(name))
     n = types.KeyboardButton('Готово!')
@@ -339,28 +335,29 @@ def part_killed(chat_id):
         if records_data[n][0] == str(chat_id):
             game_name = records_data[n][2]
             break
+    for n in range(len(records_data)):
+        if records_data[n][0] == str(chat_id) and records_data[n][2] == game_name:
+            doomed = records_data[n][3]
+            victim_name = records_data[n][5]
+            records_data[n][5] = ''
+    for n in range(len(records_data)):
+        if records_data[n][5] == doomed:
+            killer_id = records_data[n][0]
+            records_data[n][5] = victim_name
     for line in records_data:
         if line[2] == game_name and line[5] != '':
             doomed_counter += 1
+    print(doomed_counter)
     if doomed_counter == 2:
         for line in records_data:
             if line[3] == '' and line[2] == game_name:
                 org_id = line[0]
         thats_all(org_id)
     else:
-        for n in range(len(records_data)):
-            if records_data[n][0] == str(chat_id):
-                doomed = records_data[n][3]
-                victim_name = records_data[n][5]
-                records_data[n][5] = ''
-        for n in range(len(records_data)):
-            if records_data[n][5] == doomed:
-                killer_id = records_data[n][0]
-                records_data[n][5] = victim_name
-        results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
+        bot.send_message(killer_id, "Успехх! Твоя новая цель - " + victim_name)
+    results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
     "valueInputOption": "USER_ENTERED",
-    "data": [{"range": 'A1:1000', "values": records_data}]}).execute()
-        bot.send_message(killer_id, "Успехх! Твоя новая цель - ", victim_name)
+    "data": [{"range": 'A1:F1000', "values": records_data}]}).execute()
 
 def org_gamenametaker(text, chat_id):
     httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
@@ -406,7 +403,7 @@ def org_startquest(chat_id):
             break
     ids = {records_data[p][0] for p in range(len(records_data)) if records_data[p][2] == game_name and records_data[p][1] == 'regd'}
     for some_id in ids:
-        part_quest(some_id)
+        part_quest(some_id, records_data, game_name)
 
 def org_start(chat_id, text):
     if text == 'Сколько человек уже зарегистрировалось?':
@@ -444,26 +441,34 @@ def thats_all(chat_id):
     sheet = client.open('Табличька')
     sheet_instance = sheet.get_worksheet(0)
     records_data = sheet_instance.get_all_values()
+    winners = []
+    comma = ', '
     for n in range(len(records_data)):
         if records_data[n][0] == str(chat_id):
             game_name = records_data[n][2]
             break
     for line in records_data:
         if line[2] == game_name:
-            bot.send_message(line[0], 'Игра закончилась!!\nНадеемся, вам понравилось. Мы открыты для отзывов и предложений: cyparaber@gmail.com')
+            key_fin = types.ReplyKeyboardRemove()
+            bot.send_message(line[0], 'Игра закончилась!!\nНадеемся, вам понравилось. Мы открыты для отзывов и предложений: cyparaber@gmail.com', reply_markup = key_fin)
+            if line[1] == 'pl':
+                winners.append(line[3])
         else:
             new_table.append(line)
+    for line in records_data:
+        if line[2] == game_name:
+            bot.send_message(line[0], 'Вот они победители слева направо:' + comma.join(winners) + '!')
+    sheet_instance.clear()
+#    print(new_table)
     results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
     "valueInputOption": "USER_ENTERED",
     "data": [{"range": 'A1:F1000', "values": new_table}]}).execute()
-
 
 def org_game(chat_id, text):
     if text =='Статистика':
         stats_game(chat_id)
     elif text == 'Принудительно завершить игру':
         thats_all(chat_id)
-        bot.send_message(some_id, 'Игра закончена. !! Победитель - ' + all_winner)
 
 def roletaker(chat_id, text):
     keyb_first = types.ReplyKeyboardRemove()
