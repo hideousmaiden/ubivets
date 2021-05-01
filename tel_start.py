@@ -4,6 +4,7 @@ from telebot import types
 import csv
 import httplib2
 import gspread
+import random
 import googleapiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 CREDENTIALS_FILE = 'cybersep-310108-c1268b1fb570.json'
@@ -319,10 +320,13 @@ def part_startgame(some_id):
         if line[0] == str(some_id):
             prey = line[5]
     status_writer(some_id, 'pl')
-    bot.send_message(some_id, u"""Игра началась!\nСейчас твоя задача - застать свою жертву наедине без свидетелей и сказать ей ***Тебя поймали***.\nПосле этого пойманный тобой человек должен при тебе ___написать боту___ со своего устройства ***меня нашли***, и тебе придёт имя новой жертвы. Остерегайся, ведь не только ты сегодня охотишься!\nТвоя первая цель - """ + prey, parse_mode='Markdown')
+    bot.send_message(some_id, u"""Игра началась!""")
+    bot.send_photo(some_id, open('telebot_4.jpg', 'rb'))
+    bot.send_message(some_id, u"""Сейчас твоя задача - застать свою жертву наедине без свидетелей и сказать ей ***Тебя поймали***.\nПосле этого пойманный тобой человек должен при тебе ___написать боту___ со своего устройства ***меня нашли***, и тебе придёт имя новой жертвы. Остерегайся, ведь не только ты сегодня охотишься!\nТвоя первая цель - """ + prey, parse_mode='Markdown')
 
 def part_killed(chat_id):
     status_writer(chat_id, 'done')
+    bot.send_photo(chat_id, open('telebot_2.jpg', 'rb'))
     bot.send_message(chat_id, "Ты выбыл_а из игры, эта погоня была легендарной. Когда игра закончится, ты узнаешь имена победителей")
     client = gspread.authorize(credentials)
     httpAuth = credentials.authorize(httplib2.Http())
@@ -354,6 +358,8 @@ def part_killed(chat_id):
                 org_id = line[0]
         thats_all(org_id)
     else:
+        pic = random.choice(['telebot_3.jpg', 'telebot_5.jpg', 'telebot_6.jpg'])
+        bot.send_photo(chat_id, open(pic, 'rb'))
         bot.send_message(killer_id, "Успехх! Твоя новая цель - " + victim_name)
     results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
     "valueInputOption": "USER_ENTERED",
@@ -472,6 +478,7 @@ def org_game(chat_id, text):
 
 def roletaker(chat_id, text):
     keyb_first = types.ReplyKeyboardRemove()
+    bot.send_photo(chat_id, open('telebot_1.jpg', 'rb'))
     if text == 'Организатор':
         bot.send_message(chat_id, "Введите кодовое имя для вашей игры:", reply_markup=keyb_first)
         status_writer(chat_id, 'ogamen')
