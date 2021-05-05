@@ -20,6 +20,7 @@ fifile = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg'
 spreadsheet = service.spreadsheets().get(spreadsheetId = fifile).execute()
 sheetlist = spreadsheet.get('sheets')
 
+
 #пока игра не завершается автоматически когда кончаются жертвы
 
 token = '1555845859:AAFT12GCr7l-vK8S67KGtqUAyOVM7_hl7Vc'
@@ -40,15 +41,15 @@ def part_gamenametaker(text, chat_id):
     httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
     service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
     results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                 ranges = 'C1:C',
+                                 ranges = 'A1:C',
                                  valueRenderOption = 'FORMATTED_VALUE',
                                  dateTimeRenderOption = 'FORMATTED_STRING').execute()
     names = results['valueRanges'][0]['values']
-    games = {k[0] for k in names if len(k) != 0}
+    games = {k[2] for k in names if len(k) != 0}
     if text not in games:
         bot.send_message(chat_id, "Такой текущей партии нет, попробуй ещё раз")
     else:
-        parts_stats = {k[1] for k in names if k[2] == text}
+        part_stats = {k[1] for k in names if k[2] == text}
         if 'orgreg' in part_stats:
             client = gspread.authorize(credentials)
             sheet = client.open('Табличька')
@@ -390,8 +391,9 @@ def org_gamenametaker(text, chat_id):
 
         keyb_org = types.ReplyKeyboardMarkup()
         for i in ['Сколько человек уже зарегистрировалось?', 'Завершить регистрацию'] : keyb_org.add(types.KeyboardButton(i))
-        bot.send_message(chat_id, "Игра создана!!\nЧтобы зарегистрироваться, участникам нужно будет ввести её название: ***" + text + '***', parse_mode='Markdown', reply_markup=keyb_org)
         status_writer(chat_id, 'orgreg')
+        bot.send_message(chat_id, "Игра создана!!\nЧтобы зарегистрироваться, участникам нужно будет ввести её название: ***" + text + '***', parse_mode='Markdown', reply_markup=keyb_org)
+
 
 def org_startquest(chat_id):
     keyb_orgq = types.ReplyKeyboardMarkup()
@@ -464,6 +466,7 @@ def thats_all(chat_id):
     for line in records_data:
         if line[2] == game_name:
             bot.send_message(line[0], 'Вот они победители слева направо:' + comma.join(winners) + '!')
+            bot.send_photo(chat_id, open('telebot_7.jpg', 'rb'))
     sheet_instance.clear()
 #    print(new_table)
     results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
