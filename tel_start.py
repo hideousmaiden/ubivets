@@ -100,11 +100,14 @@ def separator(id):
     final_cycles = []
     weighted_edges = []
     mutual_edges = []
-
+    finals = []
     raw_graph = nx.DiGraph()
     raw_graph.add_edges_from(edges)
     raw_graph.add_nodes_from(isolat)
     nodes = raw_graph.nodes
+    norm_nodes = []
+    for x in nodes:
+        norm_nodes.append(x)
     for edge_number in range(len(edges)):
         rev_edge = list(edges[edge_number])
         rev_edge.reverse()
@@ -114,6 +117,7 @@ def separator(id):
     no_conn_rate = len(nodes) + 1
     weighted_edges = []
     for limit in range(4, 0, -1):
+        final_cycles = []
         for start in paths:
             for target in nodes:
                 if start != target:
@@ -130,18 +134,17 @@ def separator(id):
         weighted_graph = nx.DiGraph()
         weighted_graph.add_weighted_edges_from(weighted_edges)
         final_paths =  weighted_graph.adj
-        cycles = list(nx.simple_cycles(weighted_graph))
-        if weighted_graph.nodes == len(nodes) and len(cycles) != 0:
-            break
-    for cycle in cycles:
-        if len(cycle) == len(nodes):
-            reversed = []
-            reversed.append(cycle[0])
-            part = cycle[1:len(cycle)]
-            part.reverse()
-            reversed.extend(part)
-            if reversed not in final_cycles:
-                final_cycles.append(cycle)
+        if len(weighted_graph.nodes) == len(nodes):
+            for x in nx.neighbors(weighted_graph, norm_nodes[0]):
+                break
+            for path in nx.all_simple_paths(weighted_graph, source = norm_nodes[0], target = x):
+                if len(final_cycles) != 2000:
+                    if len(path) == len(nodes):
+                        final_cycles.append(path)
+                else:
+                    break
+            if len(final_cycles) != 0:
+                break
     max_count = 0
     for cycle in final_cycles:
         cycle_count = 0
@@ -153,7 +156,6 @@ def separator(id):
         if cycle_count >= max_count:
             max_count = cycle_count
             best_cycle = cycle
-    print(best_cycle)
 #запись в фаил
     for n in range(len(records_data)):
         for num in range(len(best_cycle)):
