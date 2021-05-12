@@ -284,9 +284,9 @@ def command_start(id):
     resultss = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
         "valueInputOption": "USER_ENTERED",
         "data":
-            {"range": 'A' + str((len(sss) + 1)) + ':' + 'B' + str((len(sss) + 1)),
+            {"range": 'A' + str((len(sss) + 1)) + ':' + 'C' + str((len(sss) + 1)),
              "majorDimension": "ROWS",
-             "values": [[id, 'role'],]}
+             "values": [[id, 'role', '-'],]}
         }).execute()
     keyb_first = types.ReplyKeyboardMarkup()
     for el in ['Организатор', 'Участник']:
