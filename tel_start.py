@@ -253,6 +253,26 @@ def stats_game(chat_id):
             result_pl += 1
     bot.send_message(chat_id, "Вышло из игры " + str(result_kl) + " человек, а ещё играет " + str(result_pl) + ' человек')
 
+def send_news(chat_id):
+    result_kl = 0
+    result_pl = 0
+    client = gspread.authorize(credentials)
+    sheet = client.open('Табличька')
+    sheet_instance = sheet.get_worksheet(0)
+    records_data = sheet_instance.get_all_values()
+    for n in range(len(records_data)):
+        if records_data[n][0] == str(chat_id):
+            game_name = records_data[n][2]
+            break
+    for line in records_data:
+        if line[1] == 'done' and line[2] == game_name:
+            result_kl += 1
+        elif line[1] == 'pl' and line[2] == game_name:
+            result_pl += 1
+    for l in records_data:
+        if line[1] == 'pl' and line[2] == game_name:
+            bot.send_message(l[0], "Новостная сводка!!\nВышло из игры " + str(result_kl) + " человек, а ещё играет " + str(result_pl) + ' человек.\nБудьте осторожны в пустынных коридорах!')
+
 def command_start(id):
     httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
     service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
@@ -480,16 +500,19 @@ def org_game(chat_id, text):
         stats_game(chat_id)
     elif text == 'Принудительно завершить игру':
         thats_all(chat_id)
+    elif text == 'Разослать новости':
+        send_news(chat_id)
+        
 
 def roletaker(chat_id, text):
     keyb_first = types.ReplyKeyboardRemove()
-    bot.send_photo(chat_id, open('telebot_1.jpg', 'rb'))
     if text == 'Организатор':
         bot.send_message(chat_id, "Введите кодовое имя для вашей игры:", reply_markup=keyb_first)
         status_writer(chat_id, 'ogamen')
     elif text == 'Участник':
         bot.send_message(chat_id, 'Введи кодовое слово игры, в которой ты участвуешь', reply_markup=keyb_first)
         status_writer(chat_id, 'gamen')
+    bot.send_photo(chat_id, open('telebot_1.jpg', 'rb'))
 
 def gamereader(id):
     client = gspread.authorize(credentials)
