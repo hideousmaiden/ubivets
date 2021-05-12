@@ -1,3 +1,4 @@
+pip install pyTelegramBotAPI
 import telebot as tb
 import networkx as nx
 from telebot import types
