@@ -531,32 +531,32 @@ def main_body(m):
     user_id = m.chat.id
     if user_text == '/help':
         bot.send_message(user_id, 'бог поможет')
-    if user_text == '/backstage':
+    elif user_text == '/backstage':
         bot.send_message(user_id, 'нет блин фронт')
-    user_state = great_check(user_id)
-
-    if user_state == 'role':
-        roletaker(user_id, user_text)
-    elif user_state == 'gamen':
-        part_gamenametaker(user_text, user_id)
-    elif user_state == 'ogamen':
-        org_gamenametaker(user_text, user_id)
-    elif user_state == 'partn':
-        part_nametaker(user_text, user_id)
-    elif user_state == 'quest':
-            if user_text == 'Готово!':
-                part_endquest(user_id)
-            else:
-                add_friend(user_id, user_text)
-    elif user_state == 'pl' and user_text == 'меня нашли':
-        part_killed(user_id)
-    elif user_state == 'orgreg':
-        org_start(user_id, user_text)
-    elif user_state == 'orgquest':
-        org_quest(user_id, user_text)
-    elif user_state == 'orggame':
-        org_game(user_id, user_text)
-    elif user_state == None:
-        command_start(user_id)
+    else:
+        user_state = great_check(user_id)
+        if user_state == 'role':
+            roletaker(user_id, user_text)
+        elif user_state == 'gamen':
+            part_gamenametaker(user_text, user_id)
+        elif user_state == 'ogamen':
+            org_gamenametaker(user_text, user_id)
+        elif user_state == 'partn':
+            part_nametaker(user_text, user_id)
+        elif user_state == 'quest':
+                if user_text == 'Готово!':
+                    part_endquest(user_id)
+                else:
+                    add_friend(user_id, user_text)
+        elif user_state == 'pl' and user_text == 'меня нашли':
+            part_killed(user_id)
+        elif user_state == 'orgreg':
+            org_start(user_id, user_text)
+        elif user_state == 'orgquest':
+            org_quest(user_id, user_text)
+        elif user_state == 'orggame':
+            org_game(user_id, user_text)
+        elif user_state == None:
+            command_start(user_id)
 
 bot.polling()
