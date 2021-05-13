@@ -488,7 +488,7 @@ def thats_all(chat_id):
     for line in records_data:
         if line[2] == game_name:
             bot.send_message(line[0], 'Вот они победители слева направо:' + comma.join(winners) + '!')
-            bot.send_photo(chat_id, open('telebot_7.jpg', 'rb'))
+            bot.send_photo(line[0], open('telebot_7.jpg', 'rb'))
     sheet_instance.clear()
 #    print(new_table)
     results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
