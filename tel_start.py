@@ -507,12 +507,13 @@ def org_game(chat_id, text):
 def roletaker(chat_id, text):
     keyb_first = types.ReplyKeyboardRemove()
     if text == 'Организатор':
+        bot.send_photo(chat_id, open('telebot_1.jpg', 'rb'))
         bot.send_message(chat_id, "Введите кодовое имя для вашей игры:", reply_markup=keyb_first)
         status_writer(chat_id, 'ogamen')
     elif text == 'Участник':
+        bot.send_photo(chat_id, open('telebot_1.jpg', 'rb'))
         bot.send_message(chat_id, 'Введи кодовое слово игры, в которой ты участвуешь', reply_markup=keyb_first)
         status_writer(chat_id, 'gamen')
-    bot.send_photo(chat_id, open('telebot_1.jpg', 'rb'))
 
 def gamereader(id):
     client = gspread.authorize(credentials)
