@@ -1,7 +1,7 @@
 import telebot as tb
+import time
 import networkx as nx
 from telebot import types
-import csv
 import httplib2
 import gspread
 import random
@@ -9,41 +9,24 @@ import googleapiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 CREDENTIALS_FILE = 'cybersep-310108-c1268b1fb570.json'
 shit_name = '0'
-# Читаем ключи из файла
 credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'])
-
 httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
 service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-
 fifile = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg'
-
 spreadsheet = service.spreadsheets().get(spreadsheetId = fifile).execute()
 sheetlist = spreadsheet.get('sheets')
-
-
-#пока игра не завершается автоматически когда кончаются жертвы
 
 token = '1555845859:AAFT12GCr7l-vK8S67KGtqUAyOVM7_hl7Vc'
 bot = tb.TeleBot(token, parse_mode=None)
 
 def great_check(id):
-    client = gspread.authorize(credentials)
-    httpAuth = credentials.authorize(httplib2.Http())
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for line in records_data:
         if line[0] == str(id):
             return line[1]
 
 def part_gamenametaker(text, chat_id):
-    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                 ranges = 'A1:C',
-                                 valueRenderOption = 'FORMATTED_VALUE',
-                                 dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    results = batchget_wait('A1:C')
     names = results['valueRanges'][0]['values']
     games = {k[2] for k in names if len(k) != 0}
     if text not in games:
@@ -51,35 +34,69 @@ def part_gamenametaker(text, chat_id):
     else:
         part_stats = {k[1] for k in names if k[2] == text}
         if 'orgreg' in part_stats:
-            client = gspread.authorize(credentials)
-            sheet = client.open('Табличька')
-            sheet_instance = sheet.get_worksheet(0)
-            records_data = sheet_instance.get_all_values()
+            records_data = getallvalues_wait()
             for n in range(len(records_data)):
                 if records_data[n][0] == str(chat_id):
                     records_data[n][2] = text
                     break
-            results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
-            "valueInputOption": "USER_ENTERED",
-            "data": [{"range": 'A1:F1000', "values": records_data}]}).execute()
+            results = batchupdate_wait('C' + str(n + 1), [[text],])
             status_writer(chat_id, 'partn')
             bot.send_message(chat_id, "Введи своё имя и фамилию: ")
         else:
             bot.send_message(chat_id, "Регистрация на эту игру уже закончилась, попробуй снова")
 
-def separator(id):
+
+def getallvalues_wait():
     client = gspread.authorize(credentials)
     httpAuth = credentials.authorize(httplib2.Http())
     service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
     sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values() #количество строчек в таблице
+    try:
+        sheet_instance = sheet.get_worksheet(0)
+        records_data = sheet_instance.get_all_values()
+        return records_data
+    except gspread.exceptions.APIError:
+        time.sleep(40)
+        getallvalues_wait()
+
+def batchupdate_wait(ranges, values):
+    client = gspread.authorize(credentials)
+    httpAuth = credentials.authorize(httplib2.Http())
+    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
+    sheet = client.open('Табличька')
+    try:
+        results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
+        "valueInputOption": "USER_ENTERED",
+        "data": [{"range": ranges, "values": values}]}).execute()
+    except gspread.exceptions.APIError:
+        time.sleep(40)
+        batchupdate_wait(ranges, values)
+
+def batchget_wait(ranges):
+    client = gspread.authorize(credentials)
+    httpAuth = credentials.authorize(httplib2.Http())
+    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
+    sheet = client.open('Табличька')
+    try:
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        return results
+    except gspread.exceptions.APIError:
+        time.sleep(40)
+        batchget_wait()
+
+
+
+
+
+def separator(id):
+    sheet_instance = getworksheet_wait()
+    records_data = getallvalues_wait(sheet_instance)
     edges = []
     isolat = []
-    client = gspread.authorize(credentials)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for n in range(len(records_data)):
         if records_data[n][0] == str(id):
             game_name = records_data[n][2]
@@ -96,7 +113,6 @@ def separator(id):
             else:
                 isolat.append(line[3])
 
-#графы
     final_cycles = []
     weighted_edges = []
     mutual_edges = []
@@ -156,7 +172,7 @@ def separator(id):
         if cycle_count >= max_count:
             max_count = cycle_count
             best_cycle = cycle
-#запись в фаил
+
     for n in range(len(records_data)):
         for num in range(len(best_cycle)):
             if records_data[n][3] == best_cycle[num] and num != (len(best_cycle) - 1):
@@ -165,46 +181,29 @@ def separator(id):
             elif records_data[n][3] == best_cycle[num] and num == (len(best_cycle) - 1):
                 records_data[n][5] = best_cycle[0]
                 break
-        print(records_data[n])
-    results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
-    "valueInputOption": "USER_ENTERED",
-    "data": [{"range": 'A1:F1000', "values": records_data}]}).execute()
+    results =  batchupdate_wait('A1:F', records_data)
 
 def status_writer(id, status):
-    client = gspread.authorize(credentials)
-    httpAuth = credentials.authorize(httplib2.Http())
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for n in range(len(records_data)):
         if records_data[n][0] == str(id):
             records_data[n][1] = status
-    results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
-    "valueInputOption": "USER_ENTERED",
-    "data": [{"range": 'A1:F1000', "values": records_data}]}).execute()
+            break
+    results = batchupdate_wait('B' + str(n + 1), [[status], ])
+
 
 def add_friend(chat_id, text):
-    client = gspread.authorize(credentials)
-    httpAuth = credentials.authorize(httplib2.Http())
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for n in range(len(records_data)):
         if records_data[n][0] == str(chat_id):
             records_data[n][4] += ';'
             records_data[n][4] += text
-    results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
-    "valueInputOption": "USER_ENTERED",
-    "data": [{"range": 'A1:F', "values": records_data}]}).execute()
+            break
+    results = batchupdate_wait('E' + str(n + 1), [[records_data[n][4]], ])
 
 def stats_reg(chat_id):
     result = 0
-    client = gspread.authorize(credentials)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for n in range(len(records_data)):
         if records_data[n][0] == str(chat_id):
             game_name = records_data[n][2]
@@ -219,10 +218,7 @@ def stats_reg(chat_id):
 
 def stats_quest(chat_id):
     result = 0
-    client = gspread.authorize(credentials)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for n in range(len(records_data)):
         if records_data[n][0] == str(chat_id):
             game_name = records_data[n][2]
@@ -238,10 +234,7 @@ def stats_quest(chat_id):
 def stats_game(chat_id):
     result_kl = 0
     result_pl = 0
-    client = gspread.authorize(credentials)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for n in range(len(records_data)):
         if records_data[n][0] == str(chat_id):
             game_name = records_data[n][2]
@@ -256,10 +249,7 @@ def stats_game(chat_id):
 def send_news(chat_id):
     result_kl = 0
     result_pl = 0
-    client = gspread.authorize(credentials)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for n in range(len(records_data)):
         if records_data[n][0] == str(chat_id):
             game_name = records_data[n][2]
@@ -274,47 +264,31 @@ def send_news(chat_id):
             bot.send_message(l[0], "Новостная сводка!!\nВышло из игры " + str(result_kl) + " человек, а ещё играет " + str(result_pl) + ' человек.\nБудьте осторожны в пустынных коридорах!')
 
 def command_start(id):
-    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
+    httpAuth = credentials.authorize(httplib2.Http())
     service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                 ranges = 'A1:A',
-                                 valueRenderOption = 'FORMATTED_VALUE',
-                                 dateTimeRenderOption = 'FORMATTED_STRING').execute()
-    sss = results['valueRanges'][0]['values']
-    resultss = service.spreadsheets().values().batchUpdate(spreadsheetId = fifile, body = {
-        "valueInputOption": "USER_ENTERED",
-        "data":
-            {"range": 'A' + str((len(sss) + 1)) + ':' + 'C' + str((len(sss) + 1)),
-             "majorDimension": "ROWS",
-             "values": [[id, 'role', '-'],]}
-        }).execute()
+    results = batchget_wait('A1:A')
+    num = results['valueRanges'][0]['values']
+    result = service.spreadsheets().values().append(spreadsheetId='1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', range= 'A1:F', valueInputOption='USER_ENTERED', body = {
+                "range": 'A1:F',
+                 "values": [[id, 'role', '-'],]}).execute()
     keyb_first = types.ReplyKeyboardMarkup()
     for el in ['Организатор', 'Участник']:
         keyb_first.add(types.KeyboardButton(el))
     bot.send_message(id, "Привет!\nВыбери свою роль:", reply_markup=keyb_first)
 
 def part_nametaker(text, chat_id):
-    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                 ranges = 'D1:D',
-                                 valueRenderOption = 'FORMATTED_VALUE',
-                                 dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    results = batchget_wait('D1:D')
     names = results['valueRanges'][0]['values']
     part_names = {k[0] for k in names if len(k) != 0}
     if text in part_names:
         bot.send_message(chat_id, "Это имя уже занято, попробуй ещё раз")
     else:
-        client = gspread.authorize(credentials)
-        sheet = client.open('Табличька')
-        sheet_instance = sheet.get_worksheet(0)
-        records_data = sheet_instance.get_all_values()
+        records_data = getallvalues_wait()
         for n in range(len(records_data)):
             if records_data[n][0] == str(chat_id):
                 records_data[n][3] = text
-        results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
-        "valueInputOption": "USER_ENTERED",
-        "data": [{"range": 'A1:F1000', "values": records_data}]}).execute()
+                break
+        results = batchupdate_wait('D' + str(n + 1), [[text],])
         bot.send_message(chat_id, "Ура, регистрация пройдена! Жди начала опроса.")
         status_writer(chat_id, 'regd')
 
@@ -333,15 +307,11 @@ def part_endquest(chat_id):
     bot.send_message(chat_id, "Осталось дождаться начала игры!", reply_markup = keyb_q)
 
 def part_startgame(some_id):
-    client = gspread.authorize(credentials)
-    httpAuth = credentials.authorize(httplib2.Http())
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for line in records_data:
         if line[0] == str(some_id):
             prey = line[5]
+            break
     status_writer(some_id, 'pl')
     bot.send_message(some_id, u"""Игра началась!""")
     bot.send_photo(some_id, open('telebot_4.jpg', 'rb'))
@@ -351,12 +321,7 @@ def part_killed(chat_id):
     status_writer(chat_id, 'done')
     bot.send_photo(chat_id, open('telebot_2.jpg', 'rb'))
     bot.send_message(chat_id, "Ты выбыл_а из игры, эта погоня была легендарной. Когда игра закончится, ты узнаешь имена победителей")
-    client = gspread.authorize(credentials)
-    httpAuth = credentials.authorize(httplib2.Http())
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     doomed_counter = 0
     for n in range(len(records_data)):
         if records_data[n][0] == str(chat_id):
@@ -374,7 +339,6 @@ def part_killed(chat_id):
     for line in records_data:
         if line[2] == game_name and line[5] != '':
             doomed_counter += 1
-    print(doomed_counter)
     if doomed_counter == 2:
         for line in records_data:
             if line[3] == '' and line[2] == game_name:
@@ -384,33 +348,21 @@ def part_killed(chat_id):
         pic = random.choice(['telebot_3.jpg', 'telebot_5.jpg', 'telebot_6.jpg'])
         bot.send_photo(chat_id, open(pic, 'rb'))
         bot.send_message(killer_id, "Успехх! Твоя новая цель - " + victim_name)
-    results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
-    "valueInputOption": "USER_ENTERED",
-    "data": [{"range": 'A1:F1000', "values": records_data}]}).execute()
+    results = batchupdate_wait('A1:F', records_data)
 
 def org_gamenametaker(text, chat_id):
-    httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                 ranges = 'C1:C',
-                                 valueRenderOption = 'FORMATTED_VALUE',
-                                 dateTimeRenderOption = 'FORMATTED_STRING').execute()
+    results = batchget_wait('C1:C')
     names = results['valueRanges'][0]['values']
     games = {k[0] for k in names if len(k) != 0}
     if text in games:
         bot.send_message(chat_id, "Такая партия уже существует, попробуйте ещё раз")
     else:
-        client = gspread.authorize(credentials)
-        sheet = client.open('Табличька')
-        sheet_instance = sheet.get_worksheet(0)
-        records_data = sheet_instance.get_all_values()
+        records_data = get_all_values()
         for n in range(len(records_data)):
             if records_data[n][0] == str(chat_id):
                 records_data[n][2] = text
-        results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
-        "valueInputOption": "USER_ENTERED",
-        "data": [{"range": 'A1:F1000', "values": records_data}]}).execute()
-
+                break
+        results = batchupdate_wait('C' + str(n + 1), [[text], ])
         keyb_org = types.ReplyKeyboardMarkup()
         for i in ['Сколько человек уже зарегистрировалось?', 'Завершить регистрацию'] : keyb_org.add(types.KeyboardButton(i))
         status_writer(chat_id, 'orgreg')
@@ -423,10 +375,7 @@ def org_startquest(chat_id):
         keyb_orgq.add(types.KeyboardButton(act))
     bot.send_message(chat_id, "Опрос о знакомых начался", reply_markup=keyb_orgq)
     status_writer(chat_id, 'orgquest')
-    client = gspread.authorize(credentials)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for n in range(len(records_data)):
         if records_data[n][0] == str(chat_id):
             game_name = records_data[n][2]
@@ -448,10 +397,7 @@ def org_quest(chat_id, text):
         keyb_orgq = types.ReplyKeyboardRemove()
         separator(chat_id)
         status_writer(chat_id, 'orggame')
-        client = gspread.authorize(credentials)
-        sheet = client.open('Табличька')
-        sheet_instance = sheet.get_worksheet(0)
-        records_data = sheet_instance.get_all_values()
+        records_data = getallvalues_wait()
         for n in range(len(records_data)):
             if records_data[n][0] == str(chat_id):
                 game_name = records_data[n][2]
@@ -465,14 +411,8 @@ def org_quest(chat_id, text):
 
 def thats_all(chat_id):
     new_table = []
-    client = gspread.authorize(credentials)
-    httpAuth = credentials.authorize(httplib2.Http())
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     winners = []
-    comma = ', '
     for n in range(len(records_data)):
         if records_data[n][0] == str(chat_id):
             game_name = records_data[n][2]
@@ -487,13 +427,10 @@ def thats_all(chat_id):
             new_table.append(line)
     for line in records_data:
         if line[2] == game_name:
-            bot.send_message(line[0], 'Вот они победители слева направо:' + comma.join(winners) + '!')
+            bot.send_message(line[0], 'Вот они победители слева направо:' + ', '.join(winners) + '!')
             bot.send_photo(line[0], open('telebot_7.jpg', 'rb'))
     sheet_instance.clear()
-#    print(new_table)
-    results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
-    "valueInputOption": "USER_ENTERED",
-    "data": [{"range": 'A1:F1000', "values": new_table}]}).execute()
+    results = batchupdate_wait('A1:F', new_table)
 
 def org_game(chat_id, text):
     if text =='Статистика':
@@ -516,12 +453,7 @@ def roletaker(chat_id, text):
         status_writer(chat_id, 'gamen')
 
 def gamereader(id):
-    client = gspread.authorize(credentials)
-    httpAuth = credentials.authorize(httplib2.Http())
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    sheet = client.open('Табличька')
-    sheet_instance = sheet.get_worksheet(0)
-    records_data = sheet_instance.get_all_values()
+    records_data = getallvalues_wait()
     for line in records_data:
         if line[0] == str(id):
             return line[2]
@@ -531,23 +463,25 @@ def main_body(m):
     user_text = m.text
     user_id = m.chat.id
     if user_text == '/help':
-        bot.send_message(user_id, u'''Если вы хотите присоединиться к игре в качестве участника, отправьте сообщение ***/start***, затем выберите опцию ***Участник*** и введите название партии, к которой хотите присоединиться.\nЗарегистрируйтесь под тем именем, под которым вас знают остальные играющие. Когда регистрация завершится (все желающие войдут в игру), вам будет предложено выбрать имена тех людей, с кем вы знакомы. Это произойдет через некоторое время после того, как зарегистрируетесь лично вы.\nПосле того, как вы выберете всех знакомых вам людей из предложенного списка, нажмите ***Готово!***.\nЕсли вам пришло сообщение о начале опроса о знакомых, но список не отображается, нажмите на значок с четырьмя квадратами внутри в верхней части клавиатуры (в той, где отображается набираемый текст) справа.\nЕсли вы все сделали правильно, позже вам придет имя вашей жертвы – человека, которого вы должны поймать без свидетелей и оповестить о том, что вы – его убийца. Этj произойдет после того, как все участники отметят своих знакомых.\n
-Если вас убили, отправьте сообщение ***меня нашли*** прямо после убийства.\n
-Если вы убили, проверьте, что жертва отправила боту сообщение ***меня нашли*** со своего аккаунта. Затем вам придет сообщение с именем вашей новой жертвы.\n
-Если во время убийства появились свидетели, убийство считается несостоявшимся.\n
-Когда в живых останутся лишь два человека, игра закончится и вам придет сообщение с именами победителей.\n
-Игра может закончиться досрочно – тогда, когда ее решит завершить организатор – в этом случае победителями будут считаться все, кто не умер к этому моменту.\n\n
-Если вы хотите начать новую игру в качестве организатора, отправьте сообщение ***/start***, затем выберите опцию ***Организатор*** и введите название вашей партии. Регистрация участников начнется автоматически.\n
-Вы можете посмотреть, сколько человек уже зарегистрировалось. Для этого отправьте боту сообщение ***Сколько человек уже зарегистрировалось?***\n
-После того, как вы решите, что зарегистрировались все желающие, отправьте сообщение ***Завершить регистрацию***. После этого автоматически начнется опрос всех участников об их знакомствах. Новые участники присоединиться уже не смогут.\n
-Вы можете в любой момент посмотреть, сколько человек уже прошло опрос. Для этого отправьте сообщение ***Сколько человек уже прошло опрос?***\n
-После того, как вы решите, что все участники прошли опрос о знакомствах, отправьте боту сообщение ***Завершить прохождение опросов и начать игру***. После этого каждому участнику автоматически отправится имя его первой жертвы. Проходить опросы участники больше не смогут.\n
-В любой момент вы можете посмотреть, сколько человек убито. Для этого отправьте сообщение ***Статистика***\n
-Вы можете рассылать новости всем участникам о том, как проходит игра. Для этого отправьте сообщение ***Разослать новости***\n
-Игра завершится автоматически, когда в живых останется ровно два участника. Они будут объявлены победителями, всем придет оповещение о конце партии\n
-Вы можете в любой момент досрочно завершить игру. В этом случае победителями будут объявлены все, кто остался в живых до этого времени. После завершения игры возобновить ее будет нельзя. Для завершения отправьте сообщение ***Принудительно завершить игру***\n
-Если у вас остались вопросы, на которые вы не нашли ответа в сообщениях бота, у организатора или в этом гайде, напишите нам на почту ___cyparaber@gmail.com___. На эту же почту можно отправить все ваши пожелания, предложения и негодования о нашем боте, мы будем им очень рады.\n
-Приятной игры (и пусть победит хитрейший)!''', parse_mode = "Markdown")
+        bot.send_message(user_id, u'''Если вы хотите присоединиться к игре в качестве участника, отправьте сообщение ***/start***, затем выберите опцию ***Участник*** и введите название партии, к которой хотите присоединиться.\nЗарегистрируйтесь под тем именем, под которым вас знают остальные играющие. Когда регистрация завершится (все желающие войдут в игру), вам будет предложено выбрать имена тех людей, с кем вы знакомы. Это произойдет через некоторое время после того, как зарегистрируетесь
+        лично вы.\nПосле того, как вы выберете всех знакомых вам людей из предложенного списка, нажмите ***Готово!***.\nЕсли вам пришло сообщение о начале опроса о знакомых, но список не отображается, нажмите на значок с четырьмя квадратами внутри в верхней части клавиатуры (в той, где отображается набираемый текст) справа.\nЕсли вы все сделали правильно, позже вам придет имя вашей жертвы – человека, которого вы должны поймать без свидетелей и оповестить о том, что вы – его убийца. Это
+        произойдет после того, как все участники отметят своих знакомых.\n
+        Если вас убили, отправьте сообщение ***меня нашли*** прямо после убийства.\n
+        Если вы убили, проверьте, что жертва отправила боту сообщение ***меня нашли*** со своего аккаунта. Затем вам придет сообщение с именем вашей новой жертвы.\n
+        Если во время убийства появились свидетели, убийство считается несостоявшимся.\n
+        Когда в живых останутся лишь два человека, игра закончится и вам придет сообщение с именами победителей.\n
+        Игра может закончиться досрочно – тогда, когда ее решит завершить организатор – в этом случае победителями будут считаться все, кто не умер к этому моменту.\n\n
+        Если вы хотите начать новую игру в качестве организатора, отправьте сообщение ***/start***, затем выберите опцию ***Организатор*** и введите название вашей партии. Регистрация участников начнется автоматически.\n
+        Вы можете посмотреть, сколько человек уже зарегистрировалось. Для этого отправьте боту сообщение ***Сколько человек уже зарегистрировалось?***\n
+        После того, как вы решите, что зарегистрировались все желающие, отправьте сообщение ***Завершить регистрацию***. После этого автоматически начнется опрос всех участников об их знакомствах. Новые участники присоединиться уже не смогут.\n
+        Вы можете в любой момент посмотреть, сколько человек уже прошло опрос. Для этого отправьте сообщение ***Сколько человек уже прошло опрос?***\n
+        После того, как вы решите, что все участники прошли опрос о знакомствах, отправьте боту сообщение ***Завершить прохождение опросов и начать игру***. После этого каждому участнику автоматически отправится имя его первой жертвы. Проходить опросы участники больше не смогут.\n
+        В любой момент вы можете посмотреть, сколько человек убито. Для этого отправьте сообщение ***Статистика***\n
+        Вы можете рассылать новости всем участникам о том, как проходит игра. Для этого отправьте сообщение ***Разослать новости***\n
+        Игра завершится автоматически, когда в живых останется ровно два участника. Они будут объявлены победителями, всем придет оповещение о конце партии\n
+        Вы можете в любой момент досрочно завершить игру. В этом случае победителями будут объявлены все, кто остался в живых до этого времени. После завершения игры возобновить ее будет нельзя. Для завершения отправьте сообщение ***Принудительно завершить игру***\n
+        Если у вас остались вопросы, на которые вы не нашли ответа в сообщениях бота, у организатора или в этом гайде, напишите нам на почту ___cyparaber@gmail.com___. На эту же почту можно отправить все ваши пожелания, предложения и негодования о нашем боте, мы будем им очень рады.\n
+        Приятной игры (и пусть победит хитрейший)!''', parse_mode = "Markdown")
     elif user_text == '/backstage':
         bot.send_message(user_id, 'Наш бот разработан на языке программирования Python. Всю информацию об участниках он хранит в Google-таблице, ссылку на которую мы можем предоставить, если вы обратитесь к нам на почту.\nНаш бот определяет жертву для каждого игрока с помощью графа, построенного на основе информации о знакомствах каждого. Все участники связаны единым циклом, в котором соседи не знают друг друга и имеют как можно меньшее количество общих знакомых. Каждые правый сосед является жертвой левому. После того, как человека убили, его киллеру достается та жертва, которую убитый не успел найти. Игра продолжается до момента, когда в живых останется ровно два человека (в этот момент они будут являться жертвами друг друга), или до принудительного завершения игры организатором. По всем дополнительным вопросам можно обращаться к нам на почту cyparaber@gmail.com . Удачной игры!', parse_mode = "Markdown")
     else:
