@@ -72,7 +72,7 @@ def batchupdate_wait(ranges, values):
         "data": [{"range": ranges, "values": values}]}).execute()
     except gspread.exceptions.APIError:
         time.sleep(60)
-         results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
+        results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
         "valueInputOption": "USER_ENTERED",
         "data": [{"range": ranges, "values": values}]}).execute()
 
