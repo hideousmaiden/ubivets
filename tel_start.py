@@ -57,7 +57,9 @@ def getallvalues_wait():
         return records_data
     except gspread.exceptions.APIError:
         time.sleep(60)
-        getallvalues_wait()
+        sheet_instance = sheet.get_worksheet(0)
+        records_data = sheet_instance.get_all_values()
+        return records_data
 
 def batchupdate_wait(ranges, values):
     client = gspread.authorize(credentials)
