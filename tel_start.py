@@ -1,7 +1,7 @@
 import telebot as tb
-import time
 import networkx as nx
 from telebot import types
+import time
 import httplib2
 import gspread
 import random
@@ -87,13 +87,8 @@ def batchget_wait(ranges):
         time.sleep(40)
         batchget_wait()
 
-
-
-
-
 def separator(id):
-    sheet_instance = getworksheet_wait()
-    records_data = getallvalues_wait(sheet_instance)
+    records_data = getallvalues_wait()
     edges = []
     isolat = []
     records_data = getallvalues_wait()
@@ -357,7 +352,7 @@ def org_gamenametaker(text, chat_id):
     if text in games:
         bot.send_message(chat_id, "Такая партия уже существует, попробуйте ещё раз")
     else:
-        records_data = get_all_values()
+        records_data = getallvalues_wait()
         for n in range(len(records_data)):
             if records_data[n][0] == str(chat_id):
                 records_data[n][2] = text
