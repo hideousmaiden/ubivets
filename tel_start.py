@@ -72,7 +72,9 @@ def batchupdate_wait(ranges, values):
         "data": [{"range": ranges, "values": values}]}).execute()
     except gspread.exceptions.APIError:
         time.sleep(60)
-        batchupdate_wait(ranges, values)
+         results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
+        "valueInputOption": "USER_ENTERED",
+        "data": [{"range": ranges, "values": values}]}).execute()
 
 def batchget_wait(ranges):
     client = gspread.authorize(credentials)
@@ -87,8 +89,11 @@ def batchget_wait(ranges):
         return results
     except gspread.exceptions.APIError:
         time.sleep(60)
-        batchget_wait(ranges)
-
+        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
+                                     ranges = ranges,
+                                     valueRenderOption = 'FORMATTED_VALUE',
+                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
+        return results
 def separator(id):
     records_data = getallvalues_wait()
     edges = []
