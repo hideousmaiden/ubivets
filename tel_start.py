@@ -17,7 +17,7 @@ spreadsheet = service.spreadsheets().get(spreadsheetId = fifile).execute()
 sheetlist = spreadsheet.get('sheets')
 
 token = '1555845859:AAFT12GCr7l-vK8S67KGtqUAyOVM7_hl7Vc'
-bot = tb.AsyncTeleBot(token)
+bot = tb.TeleBot(token, parse_mode=None)
 
 def great_check(id):
     records_data = getallvalues_wait()
@@ -57,9 +57,7 @@ def getallvalues_wait():
         return records_data
     except gspread.exceptions.APIError:
         time.sleep(60)
-        sheet_instance = sheet.get_worksheet(0)
-        records_data = sheet_instance.get_all_values()
-        return records_data
+        return getallvalues_wait()
 
 def batchupdate_wait(ranges, values):
     client = gspread.authorize(credentials)
@@ -72,9 +70,7 @@ def batchupdate_wait(ranges, values):
         "data": [{"range": ranges, "values": values}]}).execute()
     except gspread.exceptions.APIError:
         time.sleep(60)
-        results = service.spreadsheets().values().batchUpdate(spreadsheetId = '1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', body = {
-        "valueInputOption": "USER_ENTERED",
-        "data": [{"range": ranges, "values": values}]}).execute()
+        return batchupdate_wait(ranges, values)
 
 def batchget_wait(ranges):
     client = gspread.authorize(credentials)
@@ -89,11 +85,8 @@ def batchget_wait(ranges):
         return results
     except gspread.exceptions.APIError:
         time.sleep(60)
-        results = service.spreadsheets().values().batchGet(spreadsheetId = fifile,
-                                     ranges = ranges,
-                                     valueRenderOption = 'FORMATTED_VALUE',
-                                     dateTimeRenderOption = 'FORMATTED_STRING').execute()
-        return results
+        return batchget_wait(ranges)
+
 def separator(id):
     records_data = getallvalues_wait()
     edges = []
