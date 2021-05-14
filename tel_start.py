@@ -194,17 +194,17 @@ def add_friend(chat_id, text):
             records_data[n][4] += text
             break
     results = batchupdate_wait('E' + str(n + 1), [[records_data[n][4]], ])
-    presence = False
-    while presence == False:
-        time.sleep(10)
-        records_data = batchget_wait('E' + str(n + 1))
-        friends = records_data['valueRanges'][0]['values'][0][0]
-        if text in friends.split(';'):
-            presence = True
-        else:
-            friends += ';'
-            friends += text
-            results = batchupdate_wait('E' + str(n + 1), [[friends], ])
+ #   presence = False
+  #  while presence == False:
+   #     time.sleep(5)
+   #     records_data = batchget_wait('E' + str(n + 1))
+    #    friends = records_data['valueRanges'][0]['values'][0][0]
+     #   if text in friends.split(';'):
+      #      presence = True
+      #  else:
+     #       friends += ';'
+      #      friends += text
+       #     results = batchupdate_wait('E' + str(n + 1), [[friends], ])
 
 def stats_reg(chat_id):
     result = 0
