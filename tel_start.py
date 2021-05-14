@@ -56,7 +56,7 @@ def getallvalues_wait():
         records_data = sheet_instance.get_all_values()
         return records_data
     except gspread.exceptions.APIError:
-        time.sleep(40)
+        time.sleep(60)
         getallvalues_wait()
 
 def batchupdate_wait(ranges, values):
@@ -69,7 +69,7 @@ def batchupdate_wait(ranges, values):
         "valueInputOption": "USER_ENTERED",
         "data": [{"range": ranges, "values": values}]}).execute()
     except gspread.exceptions.APIError:
-        time.sleep(40)
+        time.sleep(60)
         batchupdate_wait(ranges, values)
 
 def batchget_wait(ranges):
@@ -84,7 +84,7 @@ def batchget_wait(ranges):
                                      dateTimeRenderOption = 'FORMATTED_STRING').execute()
         return results
     except gspread.exceptions.APIError:
-        time.sleep(40)
+        time.sleep(60)
         batchget_wait(ranges)
 
 def separator(id):
