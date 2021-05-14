@@ -17,7 +17,7 @@ spreadsheet = service.spreadsheets().get(spreadsheetId = fifile).execute()
 sheetlist = spreadsheet.get('sheets')
 
 token = '1555845859:AAFT12GCr7l-vK8S67KGtqUAyOVM7_hl7Vc'
-bot = tb.TeleBot(token, parse_mode=None)
+bot = tb.AsyncTeleBot(token)
 
 def great_check(id):
     records_data = getallvalues_wait()
