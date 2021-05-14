@@ -85,7 +85,7 @@ def batchget_wait(ranges):
         return results
     except gspread.exceptions.APIError:
         time.sleep(40)
-        batchget_wait()
+        batchget_wait(ranges)
 
 def separator(id):
     records_data = getallvalues_wait()
