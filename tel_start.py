@@ -116,6 +116,7 @@ def separator(id):
     raw_graph.add_edges_from(edges)
     raw_graph.add_nodes_from(isolat)
     nodes = raw_graph.nodes
+    edges = raw_graph.edges
     norm_nodes = []
     for x in nodes:
         norm_nodes.append(x)
