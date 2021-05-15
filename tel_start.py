@@ -274,7 +274,7 @@ def send_news(chat_id):
 def command_start(id):
     httpAuth = credentials.authorize(httplib2.Http())
     service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    result = service.spreadsheets().values().append(spreadsheetId='1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', range= 'A1:F', valueInputOption='USER_ENTERED', body = {
+    result = service.spreadsheets().values().append(spreadsheetId='1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', range= 'A1:C', valueInputOption='USER_ENTERED', body = {
                 "range": 'A1:C',
                  "values": [[id, 'role', '-'],]}).execute()
     keyb_first = types.ReplyKeyboardMarkup()
