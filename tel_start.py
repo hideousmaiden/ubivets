@@ -116,10 +116,12 @@ def separator(id):
     raw_graph.add_edges_from(edges)
     raw_graph.add_nodes_from(isolat)
     nodes = raw_graph.nodes
-    edges = raw_graph.edges
+    edges = []
     norm_nodes = []
     for x in nodes:
         norm_nodes.append(x)
+    for x in raw_graph.edges:
+        edges.append(x)
     for edge_number in range(len(edges)):
         rev_edge = list(edges[edge_number])
         rev_edge.reverse()
