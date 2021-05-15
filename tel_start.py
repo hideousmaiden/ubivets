@@ -51,7 +51,7 @@ def append_wait(ranges, values):
     service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
     sheet = client.open('Табличька')
     try:
-        result = service.spreadsheets().values().append(spreadsheetId='1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', range= 'A1:F', valueInputOption='USER_ENTERED', body = {
+        result = service.spreadsheets().values().append(spreadsheetId='1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', range= 'A1:C', valueInputOption='USER_ENTERED', body = {
                 "range": ranges,
                  "values": values}).execute()
     except:
