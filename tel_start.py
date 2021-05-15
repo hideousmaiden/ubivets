@@ -45,6 +45,18 @@ def part_gamenametaker(text, chat_id):
         else:
             bot.send_message(chat_id, "Регистрация на эту игру уже закончилась, попробуй снова")
 
+def append_wait(ranges, values):
+    client = gspread.authorize(credentials)
+    httpAuth = credentials.authorize(httplib2.Http())
+    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
+    sheet = client.open('Табличька')
+    try:
+        result = service.spreadsheets().values().append(spreadsheetId='1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', range= 'A1:F', valueInputOption='USER_ENTERED', body = {
+                "range": ranges,
+                 "values": values}).execute()
+    except:
+        time.sleep(60)
+        append_wait(ranges, values)
 
 def getallvalues_wait():
     client = gspread.authorize(credentials)
@@ -272,11 +284,7 @@ def send_news(chat_id):
             bot.send_message(l[0], "Новостная сводка!!\nВышло из игры " + str(result_kl) + " человек, а ещё играет " + str(result_pl) + ' человек.\nБудьте осторожны в пустынных коридорах!')
 
 def command_start(id):
-    httpAuth = credentials.authorize(httplib2.Http())
-    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
-    result = service.spreadsheets().values().append(spreadsheetId='1oQKWSfnal13xLCPpfHqH46ROC9w9RBmIhpA70D8lLKg', range= 'A1:C', valueInputOption='USER_ENTERED', body = {
-                "range": 'A1:C',
-                 "values": [[id, 'role', '-'],]}).execute()
+    append_wait('A1:C', [[id, 'role', '-'],])
     keyb_first = types.ReplyKeyboardMarkup()
     for el in ['Организатор', 'Участник']:
         keyb_first.add(types.KeyboardButton(el))
