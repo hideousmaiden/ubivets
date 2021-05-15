@@ -448,7 +448,7 @@ def thats_all(chat_id):
             new_table.append(records_data[n])
     for line in records_data:
         if line[2] == game_name:
-            bot.send_message(line[0], 'Вот они победители слева направо:' + ', '.join(winners) + '!')
+            bot.send_message(line[0], 'Вот они победители слева направо: ' + ', '.join(winners) + '!')
             bot.send_photo(line[0], open('telebot_7.jpg', 'rb'))
     sheet_instance.clear()
     results = batchupdate_wait('A1:F', new_table)
