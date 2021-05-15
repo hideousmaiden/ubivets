@@ -421,6 +421,9 @@ def thats_all(chat_id):
     new_table = []
     records_data = getallvalues_wait()
     winners = []
+    client = gspread.authorize(credentials)
+    httpAuth = credentials.authorize(httplib2.Http())
+    service = googleapiclient.discovery.build('sheets', 'v4', http = httpAuth)
     sheet = client.open('Табличька')
     sheet_instance = sheet.get_worksheet(0)
     for n in range(len(records_data)):
