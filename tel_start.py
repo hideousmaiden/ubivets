@@ -421,6 +421,8 @@ def thats_all(chat_id):
     new_table = []
     records_data = getallvalues_wait()
     winners = []
+    sheet = client.open('Табличька')
+    sheet_instance = sheet.get_worksheet(0)
     for n in range(len(records_data)):
         if records_data[n][0] == str(chat_id):
             game_name = records_data[n][2]
