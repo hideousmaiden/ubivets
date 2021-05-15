@@ -430,14 +430,14 @@ def thats_all(chat_id):
         if records_data[n][0] == str(chat_id):
             game_name = records_data[n][2]
             break
-    for line in records_data:
-        if line[2] == game_name:
+    for n in range(len(records_data)):
+        if records_data[n][2] == game_name:
             key_fin = types.ReplyKeyboardRemove()
-            bot.send_message(line[0], 'Игра закончилась!!\nНадеемся, вам понравилось. Мы открыты для отзывов и предложений: cyparaber@gmail.com', reply_markup = key_fin)
-            if line[1] == 'pl':
-                winners.append(line[3])
+            bot.send_message(records_data[n][0], 'Игра закончилась!!\nНадеемся, вам понравилось. Мы открыты для отзывов и предложений: cyparaber@gmail.com', reply_markup = key_fin)
+            if records_data[n][1] == 'pl':
+                winners.append(records_data[n][3])
         else:
-            new_table.append(line)
+            new_table.append(records_data[n])
     for line in records_data:
         if line[2] == game_name:
             bot.send_message(line[0], 'Вот они победители слева направо:' + ', '.join(winners) + '!')
