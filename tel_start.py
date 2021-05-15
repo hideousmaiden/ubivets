@@ -416,7 +416,7 @@ def org_quest(chat_id, text):
             if records_data[n][0] == str(chat_id):
                 game_name = records_data[n][2]
                 break
-        ids = {records_data[p][0] for p in range(len(records_data)) if records_data[p][2] == game_name and records_data[p][1] in ['questd', 'regd']}
+        ids = {records_data[p][0] for p in range(len(records_data)) if records_data[p][2] == game_name and records_data[p][1] in ['questd', 'quest']}
         for some_id in ids:
             part_startgame(some_id)
         keyb_orgp = types.ReplyKeyboardMarkup()
