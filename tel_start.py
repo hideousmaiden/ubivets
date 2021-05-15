@@ -268,7 +268,7 @@ def send_news(chat_id):
         elif line[1] == 'pl' and line[2] == game_name:
             result_pl += 1
     for l in records_data:
-        if line[1] == 'pl' and line[2] == game_name:
+        if l[1] == 'pl' and l[2] == game_name:
             bot.send_message(l[0], "Новостная сводка!!\nВышло из игры " + str(result_kl) + " человек, а ещё играет " + str(result_pl) + ' человек.\nБудьте осторожны в пустынных коридорах!')
 
 def command_start(id):
