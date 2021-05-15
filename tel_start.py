@@ -351,7 +351,7 @@ def part_killed(chat_id):
             killer_id = records_data[n][0]
             records_data[n][5] = victim_name
     for line in records_data:
-        if line[2] == game_name and line[5] != '':
+        if line[2] == game_name and line[1] == 'pl':
             doomed_counter += 1
     if doomed_counter == 2:
         for line in records_data:
