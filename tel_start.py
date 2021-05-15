@@ -70,7 +70,7 @@ def batchupdate_wait(ranges, values):
         "data": [{"range": ranges, "values": values}]}).execute()
     except:
         time.sleep(60)
-        return batchupdate_wait(ranges, values)
+        batchupdate_wait(ranges, values)
 
 def batchget_wait(ranges):
     client = gspread.authorize(credentials)
