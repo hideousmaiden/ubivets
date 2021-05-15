@@ -355,14 +355,16 @@ def part_killed(chat_id):
             doomed_counter += 1
     if doomed_counter == 2:
         for line in records_data:
-            if line[3] == '' and line[2] == game_name:
+            if line[1] == 'orggame' and line[2] == game_name:
                 org_id = line[0]
+                break
+        results = batchupdate_wait('A1:F', records_data)
         thats_all(org_id)
     else:
         pic = random.choice(['telebot_3.jpg', 'telebot_5.jpg', 'telebot_6.jpg'])
         bot.send_photo(chat_id, open(pic, 'rb'))
         bot.send_message(killer_id, "Успехх! Твоя новая цель - " + victim_name)
-    results = batchupdate_wait('A1:F', records_data)
+        results = batchupdate_wait('A1:F', records_data)
 
 def org_gamenametaker(text, chat_id):
     results = batchget_wait('C1:C')
