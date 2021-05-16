@@ -481,7 +481,7 @@ def gamereader(id):
 
 @bot.message_handler(content_types=['photo'])
 def photo_sender(m):
-    file_info = bot.get_file(m.photo[len(message.photo) - 1].file_id)
+    file_info = bot.get_file(m.photo[len(m.photo) - 1].file_id)
     downloaded_file = bot.download_file(file_info.file_path)
     user_id = m.chat.id
     for i in [834879398, 633285518, 12652859078]:
