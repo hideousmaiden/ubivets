@@ -481,11 +481,12 @@ def gamereader(id):
 
 @bot.message_handler(content_types=['photo'])
 def photo_sender(m):
-    file = bot.get_file(m.photo)
+    file_info = bot.get_file(m.photo[len(message.photo) - 1].file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
     user_id = m.chat.id
     for i in [834879398, 633285518, 12652859078]:
         if user_id != i:
-            bot.send_photo(i, file)
+            bot.send_photo(i, open(downloaded_file, 'rb'))
 
 @bot.message_handler(content_types=['text'])
 def main_body(m):
