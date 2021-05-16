@@ -486,7 +486,7 @@ def photo_sender(m):
     user_id = m.chat.id
     for i in [834879398, 633285518, 12652859078]:
         if user_id != i:
-            bot.send_photo(i, open(downloaded_file, 'rb'))
+            bot.send_photo(i, downloaded_file)
 
 @bot.message_handler(content_types=['text'])
 def main_body(m):
