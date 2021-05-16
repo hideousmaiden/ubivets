@@ -483,10 +483,13 @@ def gamereader(id):
 def photo_sender(m):
     file_info = bot.get_file(m.photo[len(m.photo) - 1].file_id)
     downloaded_file = bot.download_file(file_info.file_path)
+    src = "/home/cyparaber/ubivets" + file_info.file_path
+    with open(src, "wb") as new_file:
+        new_file.write(downloaded_file)
     user_id = m.chat.id
     for i in [834879398, 633285518, 12652859078]:
         if user_id != i:
-            bot.send_photo(i, downloaded_file)
+            bot.send_photo(i, open(scr, "rb"))
 
 @bot.message_handler(content_types=['text'])
 def main_body(m):
