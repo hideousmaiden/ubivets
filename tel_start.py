@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import telebot as tb
 import networkx as nx
 from telebot import types
