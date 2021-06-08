@@ -308,15 +308,18 @@ def part_nametaker(text, chat_id):
         bot.send_message(chat_id, "Ура, регистрация пройдена! Жди начала опроса.")
         status_writer(chat_id, 'regd')
 
-def part_quest(chat_id, records_data, game_name):
+def part_quest(chat_id, records_data, game_name, org_id):
     status_writer(chat_id, 'quest')
     keyb_q = types.ReplyKeyboardMarkup()
     names = {records_data[p][3] for p in range(len(records_data)) if records_data[p][2] == game_name and records_data[p][1] != 'partn' and records_data[p][0] != chat_id}
     for name in names: keyb_q.add(types.KeyboardButton(name))
     n = types.KeyboardButton('Готово!')
     keyb_q.add(n)
-    bot.send_message(chat_id, "Выбери в этом списке тех людей, с которыми ты знаком, то есть узнаешь их, если увидишь. Нажми \"Готово!\", когда закончишь.\nПожалуйста, не нажимай на имена слишком быстро, иначе бот не успеет прогрузиться и считать их все.", reply_markup=keyb_q)
-
+    try:
+        bot.send_message(chat_id, "Выбери в этом списке тех людей, с которыми ты знаком, то есть узнаешь их, если увидишь. Нажми \"Готово!\", когда закончишь.\nПожалуйста, не нажимай на имена слишком быстро, иначе бот не успеет прогрузиться и считать их все.", reply_markup=keyb_q)
+    except:
+        bot.send_message(org_id, "Вонючий блокальщик бота - это " + str(chat_id))
+  
 def part_endquest(chat_id):
     keyb_q = types.ReplyKeyboardRemove()
     status_writer(chat_id, 'questd')
@@ -400,7 +403,7 @@ def org_startquest(chat_id):
             break
     ids = {records_data[p][0] for p in range(len(records_data)) if records_data[p][2] == game_name and records_data[p][1] == 'regd'}
     for some_id in ids:
-        part_quest(some_id, records_data, game_name)
+        part_quest(some_id, records_data, game_name, chat_id)
 
 def org_start(chat_id, text):
     if text == 'Сколько человек уже зарегистрировалось?':
