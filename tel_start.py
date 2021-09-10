@@ -165,8 +165,11 @@ def separator(id):
         if len(weighted_graph.nodes) == len(nodes):
             for x in nx.neighbors(weighted_graph, norm_nodes[0]):
                 break
+            counter = 0
             for path in nx.all_simple_paths(weighted_graph, source = norm_nodes[0], target = x):
-                if len(final_cycles) != 2000:
+                counter += 1
+                print(path)
+                if counter != 100000:
                     if len(path) == len(nodes):
                         final_cycles.append(path)
                 else:
